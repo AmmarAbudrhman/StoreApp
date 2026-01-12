@@ -1,11 +1,15 @@
-
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:store_app/screens/home_page.dart';
-
+import 'package:store_app/services/app_state.dart';
 
 void main() {
-  runApp(const StoreApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AppState(),
+      child: const StoreApp(),
+    ),
+  );
 }
 
 class StoreApp extends StatelessWidget {
@@ -22,11 +26,7 @@ class StoreApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const Scaffold(
-        body: Center(
-          child: Text('Welcome to Store App'),
-        ),
-      ),
+      home: const HomePage(),
     );
   }
 }
