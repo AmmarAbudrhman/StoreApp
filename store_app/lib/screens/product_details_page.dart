@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:store_app/models/products/product_model.dart';
 import 'package:store_app/screens/cart_page.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:store_app/services/app_state.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   final ProductModel product;
@@ -13,27 +15,37 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
-  bool isFavorite = false;
-  final List<ProductModel> cartItems = [];
-
   void _shareProduct() async {
-    final message = 'Check out this amazing product!\n\n'
+    final message =
+        'Check out this amazing product!\n\n'
         '${widget.product.title}\n'
         'Price: \$${widget.product.price.toStringAsFixed(2)}\n'
         'Rating: ${widget.product.rating.rate}/5 ⭐\n\n'
         '${widget.product.description}';
 
-    await Share.share(
-      message,
-      subject: widget.product.title,
-    );
+    await Share.share(message, subject: widget.product.title);
   }
 
-  void _addToCart() {
-    cartItems.add(widget.product);
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CartPage(cartItems: cartItems)),
+  void _addToCart(BuildContext context) {
+    final appState = Provider.of<AppState>(context, listen: false);
+    appState.addToCart(widget.product);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Added to cart'),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+        action: SnackBarAction(
+          label: 'View Cart',
+          textColor: Colors.white,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const CartPage()),
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -49,25 +61,28 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          IconButton(
-            icon: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: isFavorite ? Colors.red : Colors.black,
-            ),
-            onPressed: () {
-              setState(() {
-                isFavorite = !isFavorite;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    isFavorite
-                        ? 'Added to favorites'
-                        : 'Removed from favorites',
-                  ),
-                  behavior: SnackBarBehavior.floating,
-                  duration: const Duration(seconds: 1),
+          Consumer<AppState>(
+            builder: (context, appState, child) {
+              final isFavorite = appState.isFavorite(widget.product);
+              return IconButton(
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: isFavorite ? Colors.red : Colors.black,
                 ),
+                onPressed: () {
+                  appState.toggleFavorite(widget.product);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        isFavorite
+                            ? 'Removed from favorites'
+                            : 'Added to favorites',
+                      ),
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                },
               );
             },
           ),
@@ -219,7 +234,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: _addToCart,
+                  onPressed: () => _addToCart(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
