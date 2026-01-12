@@ -9,16 +9,20 @@ class AllProductsService {
     try {
       Response response = await _dio.get('$baseUrl/products');
 
-      List<dynamic> data = response.data;
-      List<ProductModel> products = [];
+      if (response.statusCode == 200) {
+        List<dynamic> data = response.data;
+        List<ProductModel> products = [];
 
-      for (var item in data) {
-        products.add(ProductModel.fromJson(item));
+        for (var item in data) {
+          products.add(ProductModel.fromJson(item));
+        }
+
+        return products;
+      } else {
+        throw Exception(
+          'Failed to load products. Status code: ${response.statusCode}',
+        );
       }
-
-    
-
-      return products;
     } catch (e) {
       throw Exception('Failed to load products: $e');
     }
