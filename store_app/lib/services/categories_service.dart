@@ -1,27 +1,20 @@
-import 'package:dio/dio.dart';
 import 'package:store_app/constant.dart';
+import 'package:store_app/helper/api.dart';
 
 class CategoriesService {
-  final Dio _dio = Dio();
+  final Api _api = Api();
 
   Future<List<String>> getAllCategories({required String categoryName}) async {
     try {
-      final response = await _dio.get(
-        '$baseUrl/products/category/$categoryName',
+      List<dynamic> data = await _api.get(
+        url: '$baseUrl/products/category/$categoryName',
       );
 
-      if (response.statusCode == 200) {
-        List<dynamic> data = response.data;
-        List<String> categories = [];
-        for (var item in data) {
-          categories.add(item.toString());
-        }
-        return categories;
-      } else {
-        throw Exception(
-          'Failed to load categories. Status code: ${response.statusCode}',
-        );
+      List<String> categories = [];
+      for (var item in data) {
+        categories.add(item.toString());
       }
+      return categories;
     } catch (e) {
       throw Exception('Failed to load categories: $e');
     }
