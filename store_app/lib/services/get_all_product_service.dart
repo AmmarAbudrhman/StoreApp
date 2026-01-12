@@ -1,6 +1,6 @@
 import 'package:store_app/constant.dart';
 import 'package:store_app/helper/api.dart';
-import 'package:store_app/models/p/product_model.dart';
+import 'package:store_app/models/products/product_model.dart';
 
 class AllProductsService {
   final Api _api = Api();
