@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:store_app/helper/validation.dart';
-import 'package:store_app/screens/home_page.dart';
-import 'package:store_app/screens/register_page.dart';
+import 'package:store_app/core/utils/validation.dart';
+import 'package:store_app/core/constants/app_routes.dart';
 
 class LoginPage extends StatefulWidget {
   static const String id = 'LoginPage';
@@ -46,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
         if (_emailController.text == _fakeEmail &&
             _passwordController.text == _fakePassword) {
           // Login successful
-          Navigator.pushReplacementNamed(context, HomePage.id);
+          Navigator.pushReplacementNamed(context, AppRoutes.home);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Login successful!'),
@@ -185,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
                     const Text("Don't have an account? "),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, RegisterPage.id);
+                        Navigator.pushNamed(context, AppRoutes.register);
                       },
                       child: const Text('Register'),
                     ),
