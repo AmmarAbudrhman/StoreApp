@@ -17,20 +17,22 @@ final categoryByIdProvider = FutureProvider.family<CategoryModel, int>((
   return categoryService.getCategoryById(id);
 });
 
-class CategoryNotifier extends StateNotifier<AsyncValue<List<CategoryModel>>> {
-  final CategoryService _categoryService;
-
-  CategoryNotifier(this._categoryService) : super(const AsyncValue.loading()) {
-    loadCategories();
+class CategoryNotifier extends AsyncNotifier<List<CategoryModel>> {
+  @override
+  Future<List<CategoryModel>> build() async {
+    return loadCategories();
   }
 
-  Future<void> loadCategories() async {
+  Future<List<CategoryModel>> loadCategories() async {
     state = const AsyncValue.loading();
     try {
-      final categories = await _categoryService.getAllCategories();
+      final categoryService = ref.read(categoryServiceProvider);
+      final categories = await categoryService.getAllCategories();
       state = AsyncValue.data(categories);
+      return categories;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
+      rethrow;
     }
   }
 
@@ -40,7 +42,8 @@ class CategoryNotifier extends StateNotifier<AsyncValue<List<CategoryModel>>> {
     required String imageUrl,
   }) async {
     try {
-      await _categoryService.createCategory(
+      final categoryService = ref.read(categoryServiceProvider);
+      await categoryService.createCategory(
         name: name,
         description: description,
         imageUrl: imageUrl,
@@ -59,7 +62,8 @@ class CategoryNotifier extends StateNotifier<AsyncValue<List<CategoryModel>>> {
     required String imageUrl,
   }) async {
     try {
-      await _categoryService.updateCategory(
+      final categoryService = ref.read(categoryServiceProvider);
+      await categoryService.updateCategory(
         id: id,
         name: name,
         description: description,
@@ -74,7 +78,8 @@ class CategoryNotifier extends StateNotifier<AsyncValue<List<CategoryModel>>> {
 
   Future<void> deleteCategory(int id) async {
     try {
-      await _categoryService.deleteCategory(id);
+      final categoryService = ref.read(categoryServiceProvider);
+      await categoryService.deleteCategory(id);
       await loadCategories();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -84,9 +89,6 @@ class CategoryNotifier extends StateNotifier<AsyncValue<List<CategoryModel>>> {
 }
 
 final categoryNotifierProvider =
-    StateNotifierProvider<CategoryNotifier, AsyncValue<List<CategoryModel>>>((
-      ref,
-    ) {
-      final categoryService = ref.read(categoryServiceProvider);
-      return CategoryNotifier(categoryService);
-    });
+    AsyncNotifierProvider<CategoryNotifier, List<CategoryModel>>(
+      CategoryNotifier.new,
+    );
