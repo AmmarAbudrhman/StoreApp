@@ -17,20 +17,22 @@ final customerByIdProvider = FutureProvider.family<CustomerModel, int>((
   return customerService.getCustomerById(id);
 });
 
-class CustomerNotifier extends StateNotifier<AsyncValue<List<CustomerModel>>> {
-  final CustomerService _customerService;
-
-  CustomerNotifier(this._customerService) : super(const AsyncValue.loading()) {
-    loadCustomers();
+class CustomerNotifier extends AsyncNotifier<List<CustomerModel>> {
+  @override
+  Future<List<CustomerModel>> build() async {
+    return loadCustomers();
   }
 
-  Future<void> loadCustomers() async {
+  Future<List<CustomerModel>> loadCustomers() async {
     state = const AsyncValue.loading();
     try {
-      final customers = await _customerService.getAllCustomers();
+      final customerService = ref.read(customerServiceProvider);
+      final customers = await customerService.getAllCustomers();
       state = AsyncValue.data(customers);
+      return customers;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
+      rethrow;
     }
   }
 
@@ -41,7 +43,8 @@ class CustomerNotifier extends StateNotifier<AsyncValue<List<CustomerModel>>> {
     required String address,
   }) async {
     try {
-      await _customerService.createCustomer(
+      final customerService = ref.read(customerServiceProvider);
+      await customerService.createCustomer(
         fullName: fullName,
         email: email,
         phone: phone,
@@ -62,7 +65,8 @@ class CustomerNotifier extends StateNotifier<AsyncValue<List<CustomerModel>>> {
     required String address,
   }) async {
     try {
-      await _customerService.updateCustomer(
+      final customerService = ref.read(customerServiceProvider);
+      await customerService.updateCustomer(
         id: id,
         fullName: fullName,
         email: email,
@@ -78,7 +82,8 @@ class CustomerNotifier extends StateNotifier<AsyncValue<List<CustomerModel>>> {
 
   Future<void> deleteCustomer(int id) async {
     try {
-      await _customerService.deleteCustomer(id);
+      final customerService = ref.read(customerServiceProvider);
+      await customerService.deleteCustomer(id);
       await loadCustomers();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -88,9 +93,6 @@ class CustomerNotifier extends StateNotifier<AsyncValue<List<CustomerModel>>> {
 }
 
 final customerNotifierProvider =
-    StateNotifierProvider<CustomerNotifier, AsyncValue<List<CustomerModel>>>((
-      ref,
-    ) {
-      final customerService = ref.read(customerServiceProvider);
-      return CustomerNotifier(customerService);
-    });
+    AsyncNotifierProvider<CustomerNotifier, List<CustomerModel>>(
+      CustomerNotifier.new,
+    );

@@ -106,10 +106,7 @@ class ProfileScreen extends ConsumerWidget {
                   padding: EdgeInsets.all(16.0),
                   child: Text(
                     'Management',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 _buildNavigationTile(
@@ -146,10 +143,7 @@ class ProfileScreen extends ConsumerWidget {
                   padding: EdgeInsets.all(16.0),
                   child: Text(
                     'My Shopping',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 _buildNavigationTile(

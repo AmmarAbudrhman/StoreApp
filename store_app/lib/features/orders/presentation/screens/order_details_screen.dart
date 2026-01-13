@@ -15,9 +15,7 @@ class OrderDetailsScreen extends ConsumerWidget {
     final orderAsync = ref.watch(orderByIdProvider(orderId));
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Order #$orderId'),
-      ),
+      appBar: AppBar(title: Text('Order #$orderId')),
       body: orderAsync.when(
         data: (order) {
           return SingleChildScrollView(
@@ -70,7 +68,9 @@ class OrderDetailsScreen extends ConsumerWidget {
                         const SizedBox(height: 12),
                         _buildInfoRow(
                           'Order Date',
-                          DateFormat('MMM dd, yyyy - hh:mm a').format(order.orderDate),
+                          DateFormat(
+                            'MMM dd, yyyy - hh:mm a',
+                          ).format(order.orderDate),
                           Icons.calendar_today,
                         ),
                         const SizedBox(height: 12),
@@ -115,7 +115,9 @@ class OrderDetailsScreen extends ConsumerWidget {
                           margin: const EdgeInsets.only(bottom: 8),
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: AppColors.primary.withOpacity(0.1),
+                              backgroundColor: AppColors.primary.withOpacity(
+                                0.1,
+                              ),
                               child: Text(
                                 '${item.quantity}x',
                                 style: const TextStyle(
@@ -127,7 +129,9 @@ class OrderDetailsScreen extends ConsumerWidget {
                             ),
                             title: Text(
                               item.productName,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             subtitle: Text(
                               'Unit Price: \$${item.unitPrice.toStringAsFixed(2)}',
@@ -210,10 +214,7 @@ class OrderDetailsScreen extends ConsumerWidget {
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
               const SizedBox(height: 4),
               Text(

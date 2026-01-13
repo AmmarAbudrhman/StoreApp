@@ -10,13 +10,13 @@ class ProductService {
       final response = await _api.get(
         url: '${ApiConstants.baseUrl}${ApiConstants.products}',
       );
-      
+
       // Check if response has the new API format
       if (response is Map && response['isSuccess'] == true) {
         List<dynamic> data = response['data'];
         return data.map((item) => ProductModel.fromJson(item)).toList();
       }
-      
+
       // Fallback to old format (direct array)
       List<dynamic> data = response;
       return data.map((item) => ProductModel.fromJson(item)).toList();
@@ -30,12 +30,12 @@ class ProductService {
       final response = await _api.get(
         url: '${ApiConstants.baseUrl}${ApiConstants.products}/$id',
       );
-      
+
       // Check if response has the new API format
       if (response is Map && response['isSuccess'] == true) {
         return ProductModel.fromJson(response['data']);
       }
-      
+
       // Fallback to old format
       return ProductModel.fromJson(response);
     } catch (e) {
@@ -49,13 +49,13 @@ class ProductService {
         url:
             '${ApiConstants.baseUrl}${ApiConstants.products}/category/$category',
       );
-      
+
       // Check if response has the new API format
       if (response is Map && response['isSuccess'] == true) {
         List<dynamic> data = response['data'];
         return data.map((item) => ProductModel.fromJson(item)).toList();
       }
-      
+
       // Fallback to old format (direct array)
       List<dynamic> data = response;
       return data.map((item) => ProductModel.fromJson(item)).toList();

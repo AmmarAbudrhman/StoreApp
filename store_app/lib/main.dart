@@ -87,7 +87,7 @@ class StoreApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (_) => AddEditCustomerScreen(customer: customer),
             );
-          
+
           // Orders routes
           case AppRoutes.orders:
             return MaterialPageRoute(builder: (_) => const OrdersScreen());

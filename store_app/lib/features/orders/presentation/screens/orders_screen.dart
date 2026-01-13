@@ -32,7 +32,11 @@ class OrdersScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.shopping_bag_outlined, size: 64, color: Colors.grey),
+                  Icon(
+                    Icons.shopping_bag_outlined,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
                   SizedBox(height: 16),
                   Text('No orders found'),
                 ],
@@ -56,7 +60,10 @@ class OrdersScreen extends ConsumerWidget {
                       backgroundColor: AppColors.primary,
                       child: Text(
                         '#${order.id}',
-                        style: const TextStyle(color: Colors.white, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                     title: Text(
@@ -67,7 +74,9 @@ class OrdersScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          DateFormat('MMM dd, yyyy - hh:mm a').format(order.orderDate),
+                          DateFormat(
+                            'MMM dd, yyyy - hh:mm a',
+                          ).format(order.orderDate),
                         ),
                         Text(
                           '${order.items.length} item(s)',
@@ -105,9 +114,16 @@ class OrdersScreen extends ConsumerWidget {
                               value: 'delete',
                               child: Row(
                                 children: [
-                                  Icon(Icons.delete, size: 20, color: Colors.red),
+                                  Icon(
+                                    Icons.delete,
+                                    size: 20,
+                                    color: Colors.red,
+                                  ),
                                   SizedBox(width: 8),
-                                  Text('Delete', style: TextStyle(color: Colors.red)),
+                                  Text(
+                                    'Delete',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
                                 ],
                               ),
                             ),
@@ -120,7 +136,12 @@ class OrdersScreen extends ConsumerWidget {
                                 arguments: order.id,
                               );
                             } else if (value == 'delete') {
-                              _showDeleteDialog(context, ref, order.id, order.customerName);
+                              _showDeleteDialog(
+                                context,
+                                ref,
+                                order.id,
+                                order.customerName,
+                              );
                             }
                           },
                         ),
@@ -162,12 +183,19 @@ class OrdersScreen extends ConsumerWidget {
     );
   }
 
-  void _showDeleteDialog(BuildContext context, WidgetRef ref, int id, String customerName) {
+  void _showDeleteDialog(
+    BuildContext context,
+    WidgetRef ref,
+    int id,
+    String customerName,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Order'),
-        content: Text('Are you sure you want to delete order for "$customerName"?'),
+        content: Text(
+          'Are you sure you want to delete order for "$customerName"?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
