@@ -114,6 +114,13 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 _buildNavigationTile(
                   context,
+                  Icons.inventory_2,
+                  'Products',
+                  'Manage products',
+                  AppRoutes.manageProducts,
+                ),
+                _buildNavigationTile(
+                  context,
                   Icons.category,
                   'Categories',
                   'Manage product categories',
@@ -125,6 +132,39 @@ class ProfileScreen extends ConsumerWidget {
                   'Customers',
                   'Manage customers',
                   AppRoutes.customers,
+                ),
+                _buildNavigationTile(
+                  context,
+                  Icons.shopping_bag,
+                  'Orders',
+                  'View and manage orders',
+                  AppRoutes.orders,
+                ),
+                const SizedBox(height: 20),
+                const Divider(),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'My Shopping',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                _buildNavigationTile(
+                  context,
+                  Icons.favorite,
+                  'My Favorites',
+                  'View your favorite items',
+                  AppRoutes.favorites,
+                ),
+                _buildNavigationTile(
+                  context,
+                  Icons.shopping_cart,
+                  'My Cart',
+                  'View items in your cart',
+                  AppRoutes.cart,
                 ),
                 const SizedBox(height: 20),
               ],

@@ -22,4 +22,9 @@ class AppRoutes {
   static const String customers = '/customers';
   static const String addCustomer = '/add-customer';
   static const String editCustomer = '/edit-customer';
+  
+  // Orders
+  static const String orders = '/orders';
+  static const String addOrder = '/add-order';
+  static const String orderDetails = '/order-details';
 }

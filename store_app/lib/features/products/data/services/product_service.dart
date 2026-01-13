@@ -7,9 +7,18 @@ class ProductService {
 
   Future<List<ProductModel>> getAllProducts() async {
     try {
-      List<dynamic> data = await _api.get(
+      final response = await _api.get(
         url: '${ApiConstants.baseUrl}${ApiConstants.products}',
       );
+      
+      // Check if response has the new API format
+      if (response is Map && response['isSuccess'] == true) {
+        List<dynamic> data = response['data'];
+        return data.map((item) => ProductModel.fromJson(item)).toList();
+      }
+      
+      // Fallback to old format (direct array)
+      List<dynamic> data = response;
       return data.map((item) => ProductModel.fromJson(item)).toList();
     } catch (e) {
       throw Exception('Failed to load products: $e');
@@ -18,10 +27,17 @@ class ProductService {
 
   Future<ProductModel> getProductById(int id) async {
     try {
-      final data = await _api.get(
+      final response = await _api.get(
         url: '${ApiConstants.baseUrl}${ApiConstants.products}/$id',
       );
-      return ProductModel.fromJson(data);
+      
+      // Check if response has the new API format
+      if (response is Map && response['isSuccess'] == true) {
+        return ProductModel.fromJson(response['data']);
+      }
+      
+      // Fallback to old format
+      return ProductModel.fromJson(response);
     } catch (e) {
       throw Exception('Failed to load product: $e');
     }
@@ -29,10 +45,19 @@ class ProductService {
 
   Future<List<ProductModel>> getProductsByCategory(String category) async {
     try {
-      List<dynamic> data = await _api.get(
+      final response = await _api.get(
         url:
             '${ApiConstants.baseUrl}${ApiConstants.products}/category/$category',
       );
+      
+      // Check if response has the new API format
+      if (response is Map && response['isSuccess'] == true) {
+        List<dynamic> data = response['data'];
+        return data.map((item) => ProductModel.fromJson(item)).toList();
+      }
+      
+      // Fallback to old format (direct array)
+      List<dynamic> data = response;
       return data.map((item) => ProductModel.fromJson(item)).toList();
     } catch (e) {
       throw Exception('Failed to load products by category: $e');
