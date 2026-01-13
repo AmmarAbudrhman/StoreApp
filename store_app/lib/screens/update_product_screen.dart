@@ -54,7 +54,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
       });
 
       try {
-        await _updateProductService.updateProduct(
+        final product = await _updateProductService.updateProduct(
           id: widget.product.id,
           title: _titleController.text,
           price: double.parse(_priceController.text),
@@ -68,14 +68,41 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
             _isLoading = false;
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Product updated successfully!'),
-              backgroundColor: Colors.green,
+          // Show success dialog with updated product info
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Success!'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Product updated successfully!',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Text('Product ID: ${product.id}'),
+                  Text('Title: ${product.title}'),
+                  Text('Price: \$${product.price}'),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Note: This is a demo API. Changes won\'t actually persist on the server.',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context, true);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
             ),
           );
-
-          Navigator.pop(context, true);
         }
       } catch (e) {
         if (mounted) {

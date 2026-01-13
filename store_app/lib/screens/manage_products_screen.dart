@@ -15,7 +15,7 @@ class ManageProductsScreen extends StatefulWidget {
 }
 
 class _ManageProductsScreenState extends State<ManageProductsScreen> {
-  final GetAllProductService _getAllProductService = GetAllProductService();
+  final AllProductsService _getAllProductService = AllProductsService();
   final DeleteProductService _deleteProductService = DeleteProductService();
   List<ProductModel> _products = [];
   bool _isLoading = true;

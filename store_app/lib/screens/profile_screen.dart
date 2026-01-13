@@ -1,11 +1,43 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:store_app/screens/cart_page.dart';
+import 'package:store_app/screens/edit_profile_screen.dart';
+import 'package:store_app/screens/favorites_page.dart';
 import 'package:store_app/screens/login_page.dart';
 import 'package:store_app/screens/manage_products_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   static const String id = 'ProfileScreen';
 
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String _userName = 'Test User';
+  String _userEmail = 'test@example.com';
+  String _userPhone = '+1 234 567 8900';
+  String _userAddress = '123 Main St, City, Country';
+  File? _userImage;
+
+  Future<void> _navigateToEditProfile() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+    );
+
+    if (result != null && result is Map<String, dynamic>) {
+      setState(() {
+        _userName = result['name'] ?? _userName;
+        _userEmail = result['email'] ?? _userEmail;
+        _userPhone = result['phone'] ?? _userPhone;
+        _userAddress = result['address'] ?? _userAddress;
+        _userImage = result['image'];
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +65,12 @@ class ProfileScreen extends StatelessWidget {
                   CircleAvatar(
                     radius: 60,
                     backgroundColor: Colors.blue.shade100,
-                    child: const Icon(
-                      Icons.person,
-                      size: 60,
-                      color: Colors.blue,
-                    ),
+                    backgroundImage: _userImage != null
+                        ? FileImage(_userImage!)
+                        : null,
+                    child: _userImage == null
+                        ? const Icon(Icons.person, size: 60, color: Colors.blue)
+                        : null,
                   ),
                   Positioned(
                     bottom: 0,
@@ -51,13 +84,7 @@ class ProfileScreen extends StatelessWidget {
                           size: 18,
                           color: Colors.white,
                         ),
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Camera feature coming soon'),
-                            ),
-                          );
-                        },
+                        onPressed: _navigateToEditProfile,
                       ),
                     ),
                   ),
@@ -66,14 +93,14 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             // User Name
-            const Text(
-              'Test User',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Text(
+              _userName,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            const Text(
-              'test@example.com',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+            Text(
+              _userEmail,
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
             ),
             const SizedBox(height: 30),
             // Profile Information Card
@@ -89,29 +116,29 @@ class ProfileScreen extends StatelessWidget {
                     _buildProfileItem(
                       icon: Icons.person,
                       title: 'Full Name',
-                      value: 'Test User',
-                      onTap: () {},
+                      value: _userName,
+                      onTap: _navigateToEditProfile,
                     ),
                     const Divider(height: 1),
                     _buildProfileItem(
                       icon: Icons.email,
                       title: 'Email',
-                      value: 'test@example.com',
-                      onTap: () {},
+                      value: _userEmail,
+                      onTap: _navigateToEditProfile,
                     ),
                     const Divider(height: 1),
                     _buildProfileItem(
                       icon: Icons.phone,
                       title: 'Phone',
-                      value: '+1 234 567 8900',
-                      onTap: () {},
+                      value: _userPhone,
+                      onTap: _navigateToEditProfile,
                     ),
                     const Divider(height: 1),
                     _buildProfileItem(
                       icon: Icons.location_on,
                       title: 'Address',
-                      value: '123 Main St, City, Country',
-                      onTap: () {},
+                      value: _userAddress,
+                      onTap: _navigateToEditProfile,
                     ),
                   ],
                 ),
@@ -132,9 +159,10 @@ class ProfileScreen extends StatelessWidget {
                       icon: Icons.shopping_bag,
                       title: 'My Orders',
                       onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Orders page coming soon'),
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CartPage(),
                           ),
                         );
                       },
@@ -144,7 +172,12 @@ class ProfileScreen extends StatelessWidget {
                       icon: Icons.favorite,
                       title: 'Favorites',
                       onTap: () {
-                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FavoritesPage(),
+                          ),
+                        );
                       },
                     ),
                     const Divider(height: 1),

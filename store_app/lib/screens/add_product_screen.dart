@@ -39,7 +39,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       });
 
       try {
-        await _addProductService.addProduct(
+        final product = await _addProductService.addProduct(
           title: _titleController.text,
           price: double.parse(_priceController.text),
           description: _descriptionController.text,
@@ -52,14 +52,41 @@ class _AddProductScreenState extends State<AddProductScreen> {
             _isLoading = false;
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Product added successfully!'),
-              backgroundColor: Colors.green,
+          // Show success dialog with product info
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Success!'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Product added successfully!',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Text('Product ID: ${product.id}'),
+                  Text('Title: ${product.title}'),
+                  Text('Price: \$${product.price}'),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Note: This is a demo API. The product won\'t actually persist on the server.',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context, true);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
             ),
           );
-
-          Navigator.pop(context, true);
         }
       } catch (e) {
         if (mounted) {

@@ -5,6 +5,7 @@ import 'package:store_app/models/products/product_model.dart';
 import 'package:store_app/screens/cart_page.dart';
 import 'package:store_app/screens/favorites_page.dart';
 import 'package:store_app/screens/profile_screen.dart';
+import 'package:store_app/screens/search_screen.dart';
 import 'package:store_app/services/app_state.dart';
 import 'package:store_app/services/get_all_product_service.dart';
 
@@ -36,7 +37,12 @@ class HomePage extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.search, color: Colors.black),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchScreen()),
+              );
+            },
           ),
           Consumer<AppState>(
             builder: (context, appState, child) {
