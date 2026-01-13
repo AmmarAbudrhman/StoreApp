@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:store_app/screens/home_page.dart';
+import 'package:store_app/screens/login_page.dart';
+import 'package:store_app/screens/profile_screen.dart';
+import 'package:store_app/screens/register_page.dart';
+import 'package:store_app/screens/splash_screen.dart';
 import 'package:store_app/services/app_state.dart';
 
 void main() {
@@ -19,14 +23,16 @@ class StoreApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: {
+        SplashScreen.id: (context) => const SplashScreen(),
+        LoginPage.id: (context) => const LoginPage(),
+        RegisterPage.id: (context) => const RegisterPage(),
         HomePage.id: (context) => const HomePage(),
+        ProfileScreen.id: (context) => const ProfileScreen(),
       },
-      initialRoute: HomePage.id,
+      initialRoute: SplashScreen.id,
       title: 'Store App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const HomePage(),
+      theme: ThemeData(primarySwatch: Colors.blue),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

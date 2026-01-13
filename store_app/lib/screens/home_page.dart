@@ -4,6 +4,7 @@ import 'package:store_app/components/product_card.dart';
 import 'package:store_app/models/products/product_model.dart';
 import 'package:store_app/screens/cart_page.dart';
 import 'package:store_app/screens/favorites_page.dart';
+import 'package:store_app/screens/profile_screen.dart';
 import 'package:store_app/services/app_state.dart';
 import 'package:store_app/services/get_all_product_service.dart';
 
@@ -27,6 +28,12 @@ class HomePage extends StatelessWidget {
           ),
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.person, color: Colors.black),
+            onPressed: () {
+              Navigator.pushNamed(context, ProfileScreen.id);
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.search, color: Colors.black),
             onPressed: () {},
