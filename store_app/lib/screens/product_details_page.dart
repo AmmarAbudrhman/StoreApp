@@ -4,6 +4,7 @@ import 'package:store_app/models/products/product_model.dart';
 import 'package:store_app/screens/cart_page.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:store_app/services/app_state.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   final ProductModel product;
@@ -24,6 +25,32 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         '${widget.product.description}';
 
     await Share.share(message, subject: widget.product.title);
+  }
+
+  void _shareOnWhatsApp() async {
+    final message =
+        'Check out this amazing product!\n\n'
+        '${widget.product.title}\n'
+        'Price: \$${widget.product.price.toStringAsFixed(2)}\n'
+        'Rating: ${widget.product.rating.rate}/5 ⭐\n\n'
+        '${widget.product.description}';
+
+    final url = Uri.parse(
+      'whatsapp://send?text=${Uri.encodeComponent(message)}',
+    );
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('WhatsApp is not installed'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
   }
 
   void _addToCart(BuildContext context) {
@@ -85,6 +112,21 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 },
               );
             },
+          ),
+          IconButton(
+            icon: Image.asset(
+              'assets/whatsapp_icon.png',
+              width: 24,
+              height: 24,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(
+                  Icons.chat_bubble_outline,
+                  color: Color(0xFF25D366),
+                );
+              },
+            ),
+            onPressed: _shareOnWhatsApp,
+            tooltip: 'Share on WhatsApp',
           ),
           IconButton(
             icon: const Icon(Icons.share, color: Colors.black),
