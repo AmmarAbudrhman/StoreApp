@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:store_app/screens/login_page.dart';
+import 'package:store_app/screens/manage_products_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   static const String id = 'ProfileScreen';
@@ -144,6 +145,14 @@ class ProfileScreen extends StatelessWidget {
                       title: 'Favorites',
                       onTap: () {
                         Navigator.pop(context);
+                      },
+                    ),
+                    const Divider(height: 1),
+                    _buildSettingItem(
+                      icon: Icons.inventory,
+                      title: 'Manage Products',
+                      onTap: () {
+                        Navigator.pushNamed(context, ManageProductsScreen.id);
                       },
                     ),
                     const Divider(height: 1),

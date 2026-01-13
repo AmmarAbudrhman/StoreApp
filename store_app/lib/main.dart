@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:store_app/screens/add_product_screen.dart';
 import 'package:store_app/screens/home_page.dart';
 import 'package:store_app/screens/login_page.dart';
+import 'package:store_app/screens/manage_products_screen.dart';
 import 'package:store_app/screens/profile_screen.dart';
 import 'package:store_app/screens/register_page.dart';
 import 'package:store_app/screens/splash_screen.dart';
@@ -28,6 +30,8 @@ class StoreApp extends StatelessWidget {
         RegisterPage.id: (context) => const RegisterPage(),
         HomePage.id: (context) => const HomePage(),
         ProfileScreen.id: (context) => const ProfileScreen(),
+        ManageProductsScreen.id: (context) => const ManageProductsScreen(),
+        AddProductScreen.id: (context) => const AddProductScreen(),
       },
       initialRoute: SplashScreen.id,
       title: 'Store App',
