@@ -12,4 +12,14 @@ class AppRoutes {
   static const String manageProducts = '/manage-products';
   static const String addProduct = '/add-product';
   static const String updateProduct = '/update-product';
+
+  // Categories
+  static const String categories = '/categories';
+  static const String addCategory = '/add-category';
+  static const String editCategory = '/edit-category';
+
+  // Customers
+  static const String customers = '/customers';
+  static const String addCustomer = '/add-customer';
+  static const String editCustomer = '/edit-customer';
 }

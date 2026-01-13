@@ -100,6 +100,33 @@ class ProfileScreen extends ConsumerWidget {
                 const SizedBox(height: 30),
                 _buildInfoCard(Icons.phone, 'Phone', user.phone),
                 _buildInfoCard(Icons.location_on, 'Address', user.address),
+                const SizedBox(height: 20),
+                const Divider(),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'Management',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                _buildNavigationTile(
+                  context,
+                  Icons.category,
+                  'Categories',
+                  'Manage product categories',
+                  AppRoutes.categories,
+                ),
+                _buildNavigationTile(
+                  context,
+                  Icons.people,
+                  'Customers',
+                  'Manage customers',
+                  AppRoutes.customers,
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           );
@@ -117,6 +144,25 @@ class ProfileScreen extends ConsumerWidget {
         leading: Icon(icon),
         title: Text(value),
         subtitle: Text(label),
+      ),
+    );
+  }
+
+  Widget _buildNavigationTile(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String subtitle,
+    String route,
+  ) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      child: ListTile(
+        leading: Icon(icon, color: Theme.of(context).primaryColor),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(subtitle),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: () => Navigator.pushNamed(context, route),
       ),
     );
   }
