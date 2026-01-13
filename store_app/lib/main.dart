@@ -6,6 +6,12 @@ import 'package:store_app/features/auth/presentation/screens/edit_profile_screen
 import 'package:store_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:store_app/features/auth/presentation/screens/profile_screen.dart';
 import 'package:store_app/features/auth/presentation/screens/register_screen.dart';
+import 'package:store_app/features/categories/data/models/category_model.dart';
+import 'package:store_app/features/categories/presentation/screens/add_edit_category_screen.dart';
+import 'package:store_app/features/categories/presentation/screens/categories_screen.dart';
+import 'package:store_app/features/customers/data/models/customer_model.dart';
+import 'package:store_app/features/customers/presentation/screens/add_edit_customer_screen.dart';
+import 'package:store_app/features/customers/presentation/screens/customers_screen.dart';
 import 'package:store_app/features/products/data/models/product_model.dart';
 import 'package:store_app/features/products/presentation/screens/cart_screen.dart';
 import 'package:store_app/features/products/presentation/screens/favorites_screen.dart';
@@ -53,6 +59,33 @@ class StoreApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (_) => ProductDetailsScreen(product: product),
             );
+
+          // Categories routes
+          case AppRoutes.categories:
+            return MaterialPageRoute(builder: (_) => const CategoriesScreen());
+          case AppRoutes.addCategory:
+            return MaterialPageRoute(
+              builder: (_) => const AddEditCategoryScreen(),
+            );
+          case AppRoutes.editCategory:
+            final category = settings.arguments as CategoryModel;
+            return MaterialPageRoute(
+              builder: (_) => AddEditCategoryScreen(category: category),
+            );
+
+          // Customers routes
+          case AppRoutes.customers:
+            return MaterialPageRoute(builder: (_) => const CustomersScreen());
+          case AppRoutes.addCustomer:
+            return MaterialPageRoute(
+              builder: (_) => const AddEditCustomerScreen(),
+            );
+          case AppRoutes.editCustomer:
+            final customer = settings.arguments as CustomerModel;
+            return MaterialPageRoute(
+              builder: (_) => AddEditCustomerScreen(customer: customer),
+            );
+
           default:
             return MaterialPageRoute(
               builder: (_) => Scaffold(
