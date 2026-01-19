@@ -8,7 +8,9 @@ import 'package:store_app/shared/components/badge_icon.dart';
 import 'package:store_app/shared/components/loading_widget.dart';
 
 class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key});
+  final bool isManageMode;
+
+  const HomeScreen({super.key, this.isManageMode = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -66,7 +68,10 @@ class HomeScreen extends ConsumerWidget {
             ),
             itemCount: products.length,
             itemBuilder: (context, index) {
-              return ProductCard(product: products[index]);
+              return ProductCard(
+                product: products[index],
+                isManageMode: isManageMode,
+              );
             },
           );
         },
@@ -91,6 +96,14 @@ class HomeScreen extends ConsumerWidget {
           ),
         ),
       ),
+      floatingActionButton: isManageMode
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.addProduct);
+              },
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }

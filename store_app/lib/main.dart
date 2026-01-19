@@ -19,7 +19,8 @@ import 'package:store_app/features/products/presentation/screens/cart_screen.dar
 import 'package:store_app/features/products/presentation/screens/favorites_screen.dart';
 import 'package:store_app/features/products/presentation/screens/home_screen.dart';
 import 'package:store_app/features/products/presentation/screens/product_details_screen.dart';
-import 'package:store_app/features/products/presentation/screens/search_screen.dart';
+import 'package:store_app/features/products/presentation/screens/add_product_screen.dart';
+import 'package:store_app/features/products/presentation/screens/update_product_screen.dart';
 import 'package:store_app/shared/screens/splash_screen.dart';
 
 void main() {
@@ -56,6 +57,17 @@ class StoreApp extends StatelessWidget {
             return MaterialPageRoute(builder: (_) => const FavoritesScreen());
           case AppRoutes.search:
             return MaterialPageRoute(builder: (_) => const SearchScreen());
+          case AppRoutes.manageProducts:
+            return MaterialPageRoute(
+              builder: (_) => const HomeScreen(isManageMode: true),
+            );
+          case AppRoutes.addProduct:
+            return MaterialPageRoute(builder: (_) => const AddProductScreen());
+          case AppRoutes.updateProduct:
+            final product = settings.arguments as ProductModel;
+            return MaterialPageRoute(
+              builder: (_) => UpdateProductScreen(product: product),
+            );
           case AppRoutes.productDetails:
             final product = settings.arguments as ProductModel;
             return MaterialPageRoute(
