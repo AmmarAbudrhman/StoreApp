@@ -19,14 +19,27 @@ class OrderModel {
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     return OrderModel(
-      id: json['id'] as int,
-      orderDate: DateTime.parse(json['orderDate'] as String),
-      totalAmount: (json['totalAmount'] as num).toDouble(),
-      customerId: json['customerId'] as int,
-      customerName: json['customerName'] as String,
-      items: (json['items'] as List<dynamic>)
-          .map((item) => OrderItemModel.fromJson(item as Map<String, dynamic>))
-          .toList(),
+      id: json['id'] is int
+          ? json['id']
+          : int.tryParse(json['id'].toString()) ?? 0,
+      orderDate: json['orderDate'] != null
+          ? DateTime.tryParse(json['orderDate'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+      totalAmount: json['totalAmount'] is num
+          ? (json['totalAmount'] as num).toDouble()
+          : double.tryParse(json['totalAmount'].toString()) ?? 0.0,
+      customerId: json['customerId'] is int
+          ? json['customerId']
+          : int.tryParse(json['customerId'].toString()) ?? 0,
+      customerName: json['customerName']?.toString() ?? '',
+      items: json['items'] is List
+          ? (json['items'] as List<dynamic>)
+                .map(
+                  (item) =>
+                      OrderItemModel.fromJson(item as Map<String, dynamic>),
+                )
+                .toList()
+          : [],
     );
   }
 

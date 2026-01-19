@@ -17,11 +17,19 @@ class OrderItemModel {
 
   factory OrderItemModel.fromJson(Map<String, dynamic> json) {
     return OrderItemModel(
-      id: json['id'] as int,
-      productId: json['productId'] as int,
-      productName: json['productName'] as String,
-      quantity: json['quantity'] as int,
-      unitPrice: (json['unitPrice'] as num).toDouble(),
+      id: json['id'] is int
+          ? json['id']
+          : int.tryParse(json['id'].toString()) ?? 0,
+      productId: json['productId'] is int
+          ? json['productId']
+          : int.tryParse(json['productId'].toString()) ?? 0,
+      productName: json['productName']?.toString() ?? '',
+      quantity: json['quantity'] is int
+          ? json['quantity']
+          : int.tryParse(json['quantity'].toString()) ?? 0,
+      unitPrice: json['unitPrice'] is num
+          ? (json['unitPrice'] as num).toDouble()
+          : double.tryParse(json['unitPrice'].toString()) ?? 0.0,
     );
   }
 

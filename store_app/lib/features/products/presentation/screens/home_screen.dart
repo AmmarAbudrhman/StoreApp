@@ -97,11 +97,11 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
       floatingActionButton: isManageMode
-          ? FloatingActionButton(
+          ? FloatingActionButton.large(
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.addProduct);
               },
-              child: const Icon(Icons.add),
+              child: const Icon(Icons.add, size: 36),
             )
           : null,
     );

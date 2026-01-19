@@ -75,29 +75,9 @@ class ProductService {
     }
   }
 
-  Future<ProductModel> addProduct(ProductModel product) async {
-    try {
-      final data = await _api.post(
-        url: '${ApiConstants.baseUrl}${ApiConstants.products}',
-        body: product.toJson(),
-      );
-      return ProductModel.fromJson(data);
-    } catch (e) {
-      throw Exception('Failed to add product: $e');
-    }
-  }
 
-  Future<ProductModel> updateProduct(int id, ProductModel product) async {
-    try {
-      final data = await _api.put(
-        url: '${ApiConstants.baseUrl}${ApiConstants.products}/$id',
-        body: product.toJson(),
-      );
-      return ProductModel.fromJson(data);
-    } catch (e) {
-      throw Exception('Failed to update product: $e');
-    }
-  }
+
+ 
 
   Future<void> deleteProduct(int id) async {
     try {
@@ -106,6 +86,33 @@ class ProductService {
       );
     } catch (e) {
       throw Exception('Failed to delete product: $e');
+    }
+  }
+
+  Future<ProductModel> addProduct(Map<String, dynamic> productData) async {
+    try {
+      final response = await _api.post(
+        url: '${ApiConstants.baseUrl}${ApiConstants.products}',
+        body: productData,
+      );
+      return ProductModel.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to add product: $e');
+    }
+  }
+
+  Future<ProductModel> updateProduct(
+    int id,
+    Map<String, dynamic> productData,
+  ) async {
+    try {
+      final response = await _api.put(
+        url: '${ApiConstants.baseUrl}${ApiConstants.products}/$id',
+        body: productData,
+      );
+      return ProductModel.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to update product: $e');
     }
   }
 }

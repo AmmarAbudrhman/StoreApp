@@ -11,11 +11,17 @@ class CustomerService {
       url: '${ApiConstants.baseUrl}$_customersEndpoint',
     );
 
-    if (response['isSuccess'] == true && response['data'] != null) {
+    if (response is Map &&
+        response['isSuccess'] == true &&
+        response['data'] != null) {
       final List<dynamic> data = response['data'];
       return data.map((json) => CustomerModel.fromJson(json)).toList();
     }
-    throw Exception(response['message'] ?? 'Failed to load customers');
+    // Fallback to direct array
+    if (response is List) {
+      return response.map((json) => CustomerModel.fromJson(json)).toList();
+    }
+    throw Exception('Failed to load customers');
   }
 
   Future<CustomerModel> getCustomerById(int id) async {
@@ -23,10 +29,16 @@ class CustomerService {
       url: '${ApiConstants.baseUrl}$_customersEndpoint/$id',
     );
 
-    if (response['isSuccess'] == true && response['data'] != null) {
+    if (response is Map &&
+        response['isSuccess'] == true &&
+        response['data'] != null) {
       return CustomerModel.fromJson(response['data']);
     }
-    throw Exception(response['message'] ?? 'Failed to load customer');
+    // Fallback to direct object
+    if (response is Map) {
+      return CustomerModel.fromJson(response as Map<String, dynamic>);
+    }
+    throw Exception('Failed to load customer');
   }
 
   Future<CustomerModel> createCustomer({
@@ -45,10 +57,16 @@ class CustomerService {
       },
     );
 
-    if (response['isSuccess'] == true && response['data'] != null) {
+    if (response is Map &&
+        response['isSuccess'] == true &&
+        response['data'] != null) {
       return CustomerModel.fromJson(response['data']);
     }
-    throw Exception(response['message'] ?? 'Failed to create customer');
+    // Fallback to direct object
+    if (response is Map) {
+      return CustomerModel.fromJson(response as Map<String, dynamic>);
+    }
+    throw Exception('Failed to create customer');
   }
 
   Future<CustomerModel> updateCustomer({
@@ -68,10 +86,16 @@ class CustomerService {
       },
     );
 
-    if (response['isSuccess'] == true && response['data'] != null) {
+    if (response is Map &&
+        response['isSuccess'] == true &&
+        response['data'] != null) {
       return CustomerModel.fromJson(response['data']);
     }
-    throw Exception(response['message'] ?? 'Failed to update customer');
+    // Fallback to direct object
+    if (response is Map) {
+      return CustomerModel.fromJson(response as Map<String, dynamic>);
+    }
+    throw Exception('Failed to update customer');
   }
 
   Future<bool> deleteCustomer(int id) async {
@@ -79,9 +103,10 @@ class CustomerService {
       url: '${ApiConstants.baseUrl}$_customersEndpoint/$id',
     );
 
-    if (response['isSuccess'] == true) {
+    if (response is Map && response['isSuccess'] == true) {
       return response['data'] ?? true;
     }
-    throw Exception(response['message'] ?? 'Failed to delete customer');
+    // Fallback to true if direct response
+    return true;
   }
 }

@@ -20,6 +20,7 @@ import 'package:store_app/features/products/presentation/screens/favorites_scree
 import 'package:store_app/features/products/presentation/screens/home_screen.dart';
 import 'package:store_app/features/products/presentation/screens/product_details_screen.dart';
 import 'package:store_app/features/products/presentation/screens/add_product_screen.dart';
+import 'package:store_app/features/products/presentation/screens/search_screen.dart';
 import 'package:store_app/features/products/presentation/screens/update_product_screen.dart';
 import 'package:store_app/shared/screens/splash_screen.dart';
 

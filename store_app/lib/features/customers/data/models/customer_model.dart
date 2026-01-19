@@ -15,11 +15,13 @@ class CustomerModel {
 
   factory CustomerModel.fromJson(Map<String, dynamic> json) {
     return CustomerModel(
-      id: json['id'] as int,
-      fullName: json['fullName'] as String,
-      email: json['email'] as String,
-      phone: json['phone'] as String,
-      address: json['address'] as String,
+      id: json['id'] is int
+          ? json['id']
+          : int.tryParse(json['id'].toString()) ?? 0,
+      fullName: json['fullName']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      phone: json['phone']?.toString() ?? '',
+      address: json['address']?.toString() ?? '',
     );
   }
 

@@ -10,11 +10,17 @@ class CategoryService {
       url: '${ApiConstants.baseUrl}${ApiConstants.categories}',
     );
 
-    if (response['isSuccess'] == true && response['data'] != null) {
+    if (response is Map &&
+        response['isSuccess'] == true &&
+        response['data'] != null) {
       final List<dynamic> data = response['data'];
       return data.map((json) => CategoryModel.fromJson(json)).toList();
     }
-    throw Exception(response['message'] ?? 'Failed to load categories');
+    // Fallback to direct array
+    if (response is List) {
+      return response.map((json) => CategoryModel.fromJson(json)).toList();
+    }
+    throw Exception('Failed to load categories');
   }
 
   Future<CategoryModel> getCategoryById(int id) async {
@@ -22,10 +28,16 @@ class CategoryService {
       url: '${ApiConstants.baseUrl}${ApiConstants.categories}/$id',
     );
 
-    if (response['isSuccess'] == true && response['data'] != null) {
+    if (response is Map &&
+        response['isSuccess'] == true &&
+        response['data'] != null) {
       return CategoryModel.fromJson(response['data']);
     }
-    throw Exception(response['message'] ?? 'Failed to load category');
+    // Fallback to direct object
+    if (response is Map) {
+      return CategoryModel.fromJson(response as Map<String, dynamic>);
+    }
+    throw Exception('Failed to load category');
   }
 
   Future<CategoryModel> createCategory({
@@ -38,10 +50,16 @@ class CategoryService {
       body: {'name': name, 'description': description, 'imageUrl': imageUrl},
     );
 
-    if (response['isSuccess'] == true && response['data'] != null) {
+    if (response is Map &&
+        response['isSuccess'] == true &&
+        response['data'] != null) {
       return CategoryModel.fromJson(response['data']);
     }
-    throw Exception(response['message'] ?? 'Failed to create category');
+    // Fallback to direct object
+    if (response is Map) {
+      return CategoryModel.fromJson(response as Map<String, dynamic>);
+    }
+    throw Exception('Failed to create category');
   }
 
   Future<CategoryModel> updateCategory({
@@ -55,10 +73,16 @@ class CategoryService {
       body: {'name': name, 'description': description, 'imageUrl': imageUrl},
     );
 
-    if (response['isSuccess'] == true && response['data'] != null) {
+    if (response is Map &&
+        response['isSuccess'] == true &&
+        response['data'] != null) {
       return CategoryModel.fromJson(response['data']);
     }
-    throw Exception(response['message'] ?? 'Failed to update category');
+    // Fallback to direct object
+    if (response is Map) {
+      return CategoryModel.fromJson(response as Map<String, dynamic>);
+    }
+    throw Exception('Failed to update category');
   }
 
   Future<bool> deleteCategory(int id) async {
@@ -66,9 +90,10 @@ class CategoryService {
       url: '${ApiConstants.baseUrl}${ApiConstants.categories}/$id',
     );
 
-    if (response['isSuccess'] == true) {
+    if (response is Map && response['isSuccess'] == true) {
       return response['data'] ?? true;
     }
-    throw Exception(response['message'] ?? 'Failed to delete category');
+    // Fallback to true if direct response
+    return true;
   }
 }

@@ -12,11 +12,17 @@ class OrderService {
       url: '${ApiConstants.baseUrl}$_ordersEndpoint',
     );
 
-    if (response['isSuccess'] == true && response['data'] != null) {
+    if (response is Map &&
+        response['isSuccess'] == true &&
+        response['data'] != null) {
       final List<dynamic> data = response['data'];
       return data.map((json) => OrderModel.fromJson(json)).toList();
     }
-    throw Exception(response['message'] ?? 'Failed to load orders');
+    // Fallback to direct array
+    if (response is List) {
+      return response.map((json) => OrderModel.fromJson(json)).toList();
+    }
+    throw Exception('Failed to load orders');
   }
 
   Future<OrderModel> getOrderById(int id) async {
@@ -24,10 +30,16 @@ class OrderService {
       url: '${ApiConstants.baseUrl}$_ordersEndpoint/$id',
     );
 
-    if (response['isSuccess'] == true && response['data'] != null) {
+    if (response is Map &&
+        response['isSuccess'] == true &&
+        response['data'] != null) {
       return OrderModel.fromJson(response['data']);
     }
-    throw Exception(response['message'] ?? 'Failed to load order');
+    // Fallback to direct object
+    if (response is Map) {
+      return OrderModel.fromJson(response as Map<String, dynamic>);
+    }
+    throw Exception('Failed to load order');
   }
 
   Future<OrderModel> createOrder({
@@ -42,10 +54,16 @@ class OrderService {
       },
     );
 
-    if (response['isSuccess'] == true && response['data'] != null) {
+    if (response is Map &&
+        response['isSuccess'] == true &&
+        response['data'] != null) {
       return OrderModel.fromJson(response['data']);
     }
-    throw Exception(response['message'] ?? 'Failed to create order');
+    // Fallback to direct object
+    if (response is Map) {
+      return OrderModel.fromJson(response as Map<String, dynamic>);
+    }
+    throw Exception('Failed to create order');
   }
 
   Future<OrderModel> updateOrder({
@@ -61,10 +79,16 @@ class OrderService {
       },
     );
 
-    if (response['isSuccess'] == true && response['data'] != null) {
+    if (response is Map &&
+        response['isSuccess'] == true &&
+        response['data'] != null) {
       return OrderModel.fromJson(response['data']);
     }
-    throw Exception(response['message'] ?? 'Failed to update order');
+    // Fallback to direct object
+    if (response is Map) {
+      return OrderModel.fromJson(response as Map<String, dynamic>);
+    }
+    throw Exception('Failed to update order');
   }
 
   Future<bool> deleteOrder(int id) async {
@@ -72,9 +96,10 @@ class OrderService {
       url: '${ApiConstants.baseUrl}$_ordersEndpoint/$id',
     );
 
-    if (response['isSuccess'] == true) {
+    if (response is Map && response['isSuccess'] == true) {
       return response['data'] ?? true;
     }
-    throw Exception(response['message'] ?? 'Failed to delete order');
+    // Fallback to true if direct response
+    return true;
   }
 }

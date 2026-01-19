@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:store_app/core/constants/app_colors.dart';
-import 'package:store_app/core/constants/app_routes.dart';
 import 'package:store_app/features/products/data/models/product_model.dart';
 import 'package:store_app/features/products/presentation/providers/product_provider.dart';
 import 'package:store_app/shared/components/custom_button.dart';
@@ -53,11 +51,31 @@ class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
 
   void _updateProduct() async {
     if (_formKey.currentState!.validate()) {
-      // TODO: Implement update product API call
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Update product not implemented yet')),
-      );
-      Navigator.pop(context);
+      try {
+        final productData = {
+          'title': _titleController.text.trim(),
+          'price': double.parse(_priceController.text),
+          'description': _descriptionController.text.trim(),
+          'category': _categoryController.text.trim(),
+          'image': _imageFile?.path ?? widget.product.image,
+        };
+
+        final productService = ref.read(productServiceProvider);
+        await productService.updateProduct(widget.product.id, productData);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Product updated successfully')),
+          );
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to update product: $e')),
+          );
+        }
+      }
     }
   }
 
