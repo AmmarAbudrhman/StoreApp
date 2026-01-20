@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:store_app/core/constants/app_colors.dart';
 import 'package:store_app/core/constants/app_routes.dart';
 import 'package:store_app/features/products/data/models/product_model.dart';
-import 'package:store_app/features/products/data/services/product_service.dart';
 import 'package:store_app/features/products/presentation/providers/product_provider.dart';
 
 class ProductCard extends ConsumerWidget {
@@ -46,7 +45,7 @@ class ProductCard extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: 3,
+                  flex: 2,
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[50],
@@ -73,7 +72,7 @@ class ProductCard extends ConsumerWidget {
                   ),
                 ),
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Column(
@@ -82,9 +81,9 @@ class ProductCard extends ConsumerWidget {
                       children: [
                         Text(
                           product.title,
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: Theme.of(context).textTheme.titleSmall,
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,17 +100,12 @@ class ProductCard extends ConsumerWidget {
                                   product.rating.rate.toStringAsFixed(1),
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '(${product.rating.count})',
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
                               ],
                             ),
                             const SizedBox(height: 4),
                             Text(
                               '\$${product.price.toStringAsFixed(2)}',
-                              style: Theme.of(context).textTheme.titleLarge
+                              style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(
                                     color: AppColors.primary,
                                     fontWeight: FontWeight.bold,

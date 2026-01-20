@@ -91,6 +91,27 @@ class OrderService {
     throw Exception('Failed to update order');
   }
 
+  Future<OrderModel> updateOrderStatus({
+    required int id,
+    required String status,
+  }) async {
+    final response = await _api.put(
+      url: '${ApiConstants.baseUrl}$_ordersEndpoint/$id/status',
+      body: {'status': status},
+    );
+
+    if (response is Map &&
+        response['isSuccess'] == true &&
+        response['data'] != null) {
+      return OrderModel.fromJson(response['data']);
+    }
+    // Fallback to direct object
+    if (response is Map) {
+      return OrderModel.fromJson(response as Map<String, dynamic>);
+    }
+    throw Exception('Failed to update order status');
+  }
+
   Future<bool> deleteOrder(int id) async {
     final response = await _api.delete(
       url: '${ApiConstants.baseUrl}$_ordersEndpoint/$id',

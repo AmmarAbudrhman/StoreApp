@@ -5,28 +5,54 @@ import 'package:store_app/features/customers/presentation/providers/customer_pro
 import 'package:store_app/features/customers/presentation/components/customer_card.dart';
 import 'package:store_app/shared/components/empty_state.dart';
 import 'package:store_app/shared/components/loading_widget.dart';
-import 'package:store_app/shared/components/screen_layout.dart';
+import 'package:store_app/shared/components/app_header.dart';
 
-class CustomersScreen extends ConsumerWidget {
+class CustomersScreen extends ConsumerStatefulWidget {
   const CustomersScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CustomersScreen> createState() => _CustomersScreenState();
+}
+
+class _CustomersScreenState extends ConsumerState<CustomersScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final customersAsync = ref.watch(customerNotifierProvider);
 
-    return ScreenLayout(
-      title: 'Customers',
-      icon: Icons.people,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () {
-            Navigator.pushNamed(context, AppRoutes.addCustomer);
-          },
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppHeader(
+          title: 'Customers',
+          icon: Icons.people,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.addCustomer);
+              },
+            ),
+          ],
+          showBackButton: true,
         ),
-      ],
+      ),
       body: customersAsync.when(
         data: (customers) {
+          final filteredCustomers = customers.where((customer) {
+            return customer.fullName.toLowerCase().contains(
+              _searchQuery.toLowerCase(),
+            );
+          }).toList();
+
           if (customers.isEmpty) {
             return EmptyState(
               icon: Icons.people_outline,
@@ -42,76 +68,123 @@ class CustomersScreen extends ConsumerWidget {
             );
           }
 
-          return RefreshIndicator(
-            onRefresh: () async {
-              ref.read(customerNotifierProvider.notifier).loadCustomers();
-            },
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: customers.length,
-              itemBuilder: (context, index) {
-                final customer = customers[index];
-                return CustomerCard(
-                  customer: customer,
-                  onEdit: (customerId) {
-                    Navigator.pushNamed(
-                      context,
-                      AppRoutes.editCustomer,
-                      arguments: customer,
-                    );
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search customers...',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
                   },
-                  onDelete: (customerId) async {
-                    final confirmed = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Delete Customer'),
-                        content: const Text(
-                          'Are you sure you want to delete this customer?',
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, false),
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, true),
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.red,
-                            ),
-                            child: const Text('Delete'),
-                          ),
-                        ],
-                      ),
-                    );
+                ),
+              ),
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    ref.read(customerNotifierProvider.notifier).loadCustomers();
+                  },
+                  child: filteredCustomers.isEmpty
+                      ? const Center(
+                          child: Text('No customers match your search.'),
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: filteredCustomers.length,
+                          itemBuilder: (context, index) {
+                            final customer = filteredCustomers[index];
+                            return CustomerCard(
+                              customer: customer,
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.customerDetails,
+                                  arguments: customer,
+                                );
+                              },
+                              onEdit: (customerId) {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.editCustomer,
+                                  arguments: customer,
+                                );
+                              },
+                              onDelete: (customerId) async {
+                                final confirmed = await showDialog<bool>(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Delete Customer'),
+                                    content: const Text(
+                                      'Are you sure you want to delete this customer?',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, false),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, true),
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Colors.red,
+                                        ),
+                                        child: const Text('Delete'),
+                                      ),
+                                    ],
+                                  ),
+                                );
 
-                    if (confirmed == true) {
-                      try {
-                        await ref
-                            .read(customerNotifierProvider.notifier)
-                            .deleteCustomer(customerId);
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Customer deleted successfully'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Error deleting customer: $e'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-                      }
-                    }
-                  },
-                );
-              },
-            ),
+                                if (confirmed == true) {
+                                  try {
+                                    await ref
+                                        .read(customerNotifierProvider.notifier)
+                                        .deleteCustomer(customerId);
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Customer deleted successfully',
+                                          ),
+                                          backgroundColor: Colors.green,
+                                        ),
+                                      );
+                                    }
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Error deleting customer: $e',
+                                          ),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
+                                  }
+                                }
+                              },
+                            );
+                          },
+                        ),
+                ),
+              ),
+            ],
           );
         },
         loading: () => const LoadingWidget(),

@@ -70,6 +70,20 @@ class OrderNotifier extends AsyncNotifier<List<OrderModel>> {
     }
   }
 
+  Future<void> updateOrderStatus({
+    required int id,
+    required String status,
+  }) async {
+    try {
+      final orderService = ref.read(orderServiceProvider);
+      await orderService.updateOrderStatus(id: id, status: status);
+      await loadOrders();
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      rethrow;
+    }
+  }
+
   Future<void> deleteOrder(int id) async {
     try {
       final orderService = ref.read(orderServiceProvider);

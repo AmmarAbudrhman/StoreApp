@@ -6,11 +6,15 @@ import 'package:store_app/features/orders/data/models/order_model.dart';
 class OrderCard extends StatelessWidget {
   final OrderModel order;
   final Function(int)? onViewDetails;
+  final Function(int)? onEdit;
+  final Function(int)? onDelete;
 
   const OrderCard({
     super.key,
     required this.order,
     this.onViewDetails,
+    this.onEdit,
+    this.onDelete,
   });
 
   @override
@@ -41,13 +45,55 @@ class OrderCard extends StatelessWidget {
           children: [
             Text('Date: ${dateFormat.format(order.orderDate)}'),
             Text('Total: ${currencyFormat.format(order.totalAmount)}'),
-            Text('${order.items.length} item${order.items.length == 1 ? '' : 's'}'),
+            Text('Status: ${order.status}'),
+            Text(
+              '${order.items.length} item${order.items.length == 1 ? '' : 's'}',
+            ),
           ],
         ),
         isThreeLine: true,
-        trailing: IconButton(
-          icon: const Icon(Icons.arrow_forward_ios, size: 16),
-          onPressed: onViewDetails != null ? () => onViewDetails!(order.id) : null,
+        trailing: PopupMenuButton(
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'view',
+              child: Row(
+                children: [
+                  Icon(Icons.visibility, size: 20),
+                  SizedBox(width: 8),
+                  Text('View Details'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'edit',
+              child: Row(
+                children: [
+                  Icon(Icons.edit, size: 20),
+                  SizedBox(width: 8),
+                  Text('Edit'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete, size: 20, color: Colors.red),
+                  SizedBox(width: 8),
+                  Text('Delete', style: TextStyle(color: Colors.red)),
+                ],
+              ),
+            ),
+          ],
+          onSelected: (value) {
+            if (value == 'view' && onViewDetails != null) {
+              onViewDetails!(order.id);
+            } else if (value == 'edit' && onEdit != null) {
+              onEdit!(order.id);
+            } else if (value == 'delete' && onDelete != null) {
+              onDelete!(order.id);
+            }
+          },
         ),
         onTap: onViewDetails != null ? () => onViewDetails!(order.id) : null,
       ),

@@ -4,12 +4,14 @@ import 'package:store_app/features/customers/data/models/customer_model.dart';
 
 class CustomerCard extends StatelessWidget {
   final CustomerModel customer;
+  final Function()? onTap;
   final Function(int)? onEdit;
   final Function(int)? onDelete;
 
   const CustomerCard({
     super.key,
     required this.customer,
+    this.onTap,
     this.onEdit,
     this.onDelete,
   });
@@ -19,6 +21,7 @@ class CustomerCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
+        onTap: onTap,
         leading: CircleAvatar(
           backgroundColor: AppColors.primary,
           child: Text(

@@ -20,8 +20,10 @@ class AppRoutes {
   static const String customers = '/customers';
   static const String addCustomer = '/add-customer';
   static const String editCustomer = '/edit-customer';
+  static const String customerDetails = '/customer-details';
 
   static const String orders = '/orders';
   static const String addOrder = '/add-order';
   static const String orderDetails = '/order-details';
+  static const String editOrder = '/edit-order';
 }

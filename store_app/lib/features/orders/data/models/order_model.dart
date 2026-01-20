@@ -7,6 +7,7 @@ class OrderModel {
   final int customerId;
   final String customerName;
   final List<OrderItemModel> items;
+  final String status;
 
   OrderModel({
     required this.id,
@@ -15,6 +16,7 @@ class OrderModel {
     required this.customerId,
     required this.customerName,
     required this.items,
+    required this.status,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class OrderModel {
                 )
                 .toList()
           : [],
+      status: json['status']?.toString() ?? 'pending',
     );
   }
 
@@ -51,6 +54,7 @@ class OrderModel {
       'customerId': customerId,
       'customerName': customerName,
       'items': items.map((item) => item.toJson()).toList(),
+      'status': status,
     };
   }
 
@@ -69,6 +73,7 @@ class OrderModel {
     int? customerId,
     String? customerName,
     List<OrderItemModel>? items,
+    String? status,
   }) {
     return OrderModel(
       id: id ?? this.id,
@@ -77,6 +82,7 @@ class OrderModel {
       customerId: customerId ?? this.customerId,
       customerName: customerName ?? this.customerName,
       items: items ?? this.items,
+      status: status ?? this.status,
     );
   }
 }

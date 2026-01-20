@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:store_app/core/constants/app_colors.dart';
+import 'package:store_app/core/constants/app_routes.dart';
 import 'package:store_app/features/orders/presentation/providers/order_provider.dart';
 import 'package:store_app/shared/components/loading_widget.dart';
 
@@ -15,7 +16,27 @@ class OrderDetailsScreen extends ConsumerWidget {
     final orderAsync = ref.watch(orderByIdProvider(orderId));
 
     return Scaffold(
-      appBar: AppBar(title: Text('Order #$orderId')),
+      appBar: AppBar(
+        title: Text('Order #$orderId'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              orderAsync.whenData((order) {
+                Navigator.pushNamed(
+                  context,
+                  AppRoutes.editOrder,
+                  arguments: order,
+                );
+              });
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: () => _showDeleteDialog(context, ref),
+          ),
+        ],
+      ),
       body: orderAsync.when(
         data: (order) {
           return SingleChildScrollView(
@@ -199,6 +220,52 @@ class OrderDetailsScreen extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Order'),
+        content: const Text('Are you sure you want to delete this order?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              try {
+                await ref
+                    .read(orderNotifierProvider.notifier)
+                    .deleteOrder(orderId);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Order deleted successfully'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                  Navigator.pop(context); // Go back to orders list
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error deleting order: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
       ),
     );
   }

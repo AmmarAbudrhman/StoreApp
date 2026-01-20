@@ -11,7 +11,11 @@ import 'package:store_app/features/categories/presentation/screens/add_edit_cate
 import 'package:store_app/features/categories/presentation/screens/categories_screen.dart';
 import 'package:store_app/features/customers/data/models/customer_model.dart';
 import 'package:store_app/features/customers/presentation/screens/add_edit_customer_screen.dart';
+import 'package:store_app/features/customers/presentation/screens/customer_details_screen.dart';
 import 'package:store_app/features/customers/presentation/screens/customers_screen.dart';
+import 'package:store_app/features/orders/data/models/order_model.dart';
+import 'package:store_app/features/orders/presentation/screens/add_order_screen.dart';
+import 'package:store_app/features/orders/presentation/screens/edit_order_screen.dart';
 import 'package:store_app/features/orders/presentation/screens/order_details_screen.dart';
 import 'package:store_app/features/orders/presentation/screens/orders_screen.dart';
 import 'package:store_app/features/products/data/models/product_model.dart';
@@ -100,14 +104,26 @@ class StoreApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (_) => AddEditCustomerScreen(customer: customer),
             );
+          case AppRoutes.customerDetails:
+            final customer = settings.arguments as CustomerModel;
+            return MaterialPageRoute(
+              builder: (_) => CustomerDetailsScreen(customer: customer),
+            );
 
           // Orders routes
           case AppRoutes.orders:
             return MaterialPageRoute(builder: (_) => const OrdersScreen());
+          case AppRoutes.addOrder:
+            return MaterialPageRoute(builder: (_) => const AddOrderScreen());
           case AppRoutes.orderDetails:
             final orderId = settings.arguments as int;
             return MaterialPageRoute(
               builder: (_) => OrderDetailsScreen(orderId: orderId),
+            );
+          case AppRoutes.editOrder:
+            final order = settings.arguments as OrderModel;
+            return MaterialPageRoute(
+              builder: (_) => EditOrderScreen(order: order),
             );
 
           default:

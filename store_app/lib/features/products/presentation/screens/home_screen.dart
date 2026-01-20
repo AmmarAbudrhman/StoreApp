@@ -7,7 +7,7 @@ import 'package:store_app/features/products/presentation/providers/product_provi
 import 'package:store_app/shared/components/badge_icon.dart';
 import 'package:store_app/shared/components/empty_state.dart';
 import 'package:store_app/shared/components/loading_widget.dart';
-import 'package:store_app/shared/components/screen_layout.dart';
+import 'package:store_app/shared/components/app_header.dart';
 
 class HomeScreen extends ConsumerWidget {
   final bool isManageMode;
@@ -20,37 +20,43 @@ class HomeScreen extends ConsumerWidget {
     final cartCount = ref.watch(cartCountProvider);
     final favoritesCount = ref.watch(favoritesCountProvider);
 
-    return ScreenLayout(
-      title: 'Store',
-      icon: Icons.store,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.person),
-          onPressed: () {
-            Navigator.pushNamed(context, AppRoutes.profile);
-          },
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppHeader(
+          title: 'Store',
+          icon: Icons.store,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.person),
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.profile);
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.search);
+              },
+            ),
+            BadgeIcon(
+              icon: Icons.favorite_border,
+              count: favoritesCount,
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.favorites);
+              },
+            ),
+            BadgeIcon(
+              icon: Icons.shopping_cart_outlined,
+              count: cartCount,
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.cart);
+              },
+            ),
+          ],
+          showBackButton: false,
         ),
-        IconButton(
-          icon: const Icon(Icons.search),
-          onPressed: () {
-            Navigator.pushNamed(context, AppRoutes.search);
-          },
-        ),
-        BadgeIcon(
-          icon: Icons.favorite_border,
-          count: favoritesCount,
-          onPressed: () {
-            Navigator.pushNamed(context, AppRoutes.favorites);
-          },
-        ),
-        BadgeIcon(
-          icon: Icons.shopping_cart_outlined,
-          count: cartCount,
-          onPressed: () {
-            Navigator.pushNamed(context, AppRoutes.cart);
-          },
-        ),
-      ],
+      ),
       body: Container(
         color: AppColors.background,
         child: productsAsync.when(
@@ -67,7 +73,7 @@ class HomeScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 0.75,
+                childAspectRatio: 1.0,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
               ),

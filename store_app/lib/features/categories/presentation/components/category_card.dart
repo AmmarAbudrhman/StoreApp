@@ -30,9 +30,8 @@ class CategoryCard extends StatelessWidget {
           category.name,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle:
-            category.description != null && category.description!.isNotEmpty
-            ? Text(category.description!)
+        subtitle: category.description.isNotEmpty
+            ? Text(category.description)
             : null,
         trailing: PopupMenuButton(
           itemBuilder: (context) => [
