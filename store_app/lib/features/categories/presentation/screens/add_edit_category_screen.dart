@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:store_app/core/utils/validation.dart';
 import 'package:store_app/features/categories/data/models/category_model.dart';
 import 'package:store_app/features/categories/presentation/providers/category_provider.dart';
-import 'package:store_app/shared/components/custom_button.dart';
-import 'package:store_app/shared/components/custom_text_field.dart';
+import 'package:store_app/shared/components/category_form.dart';
+import 'package:store_app/shared/components/screen_layout.dart';
 
 class AddEditCategoryScreen extends ConsumerStatefulWidget {
   final CategoryModel? category;
@@ -56,16 +55,24 @@ class _AddEditCategoryScreenState extends ConsumerState<AddEditCategoryScreen> {
               .updateCategory(
                 id: widget.category!.id,
                 name: _nameController.text.trim(),
-                description: _descriptionController.text.trim(),
-                imageUrl: _imageUrlController.text.trim(),
+                description: _descriptionController.text.trim().isEmpty
+                    ? ''
+                    : _descriptionController.text.trim(),
+                imageUrl: _imageUrlController.text.trim().isEmpty
+                    ? ''
+                    : _imageUrlController.text.trim(),
               );
         } else {
           await ref
               .read(categoryNotifierProvider.notifier)
               .createCategory(
                 name: _nameController.text.trim(),
-                description: _descriptionController.text.trim(),
-                imageUrl: _imageUrlController.text.trim(),
+                description: _descriptionController.text.trim().isEmpty
+                    ? ''
+                    : _descriptionController.text.trim(),
+                imageUrl: _imageUrlController.text.trim().isEmpty
+                    ? ''
+                    : _imageUrlController.text.trim(),
               );
         }
 
@@ -98,48 +105,17 @@ class _AddEditCategoryScreenState extends ConsumerState<AddEditCategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(isEdit ? 'Edit Category' : 'Add Category')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              CustomTextField(
-                controller: _nameController,
-                labelText: 'Category Name',
-                prefixIcon: Icons.category,
-                validator: (value) =>
-                    Validation.validateRequired(value, 'category name'),
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: _descriptionController,
-                labelText: 'Description',
-                prefixIcon: Icons.description,
-                maxLines: 3,
-                validator: (value) =>
-                    Validation.validateRequired(value, 'description'),
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: _imageUrlController,
-                labelText: 'Image URL',
-                prefixIcon: Icons.image,
-                validator: (value) =>
-                    Validation.validateRequired(value, 'image URL'),
-              ),
-              const SizedBox(height: 24),
-              CustomButton(
-                text: isEdit ? 'Update Category' : 'Create Category',
-                onPressed: _saveCategory,
-                isLoading: _isLoading,
-              ),
-            ],
-          ),
-        ),
+    return ScreenLayout(
+      title: isEdit ? 'Edit Category' : 'Add Category',
+      icon: isEdit ? Icons.edit : Icons.category,
+      body: CategoryForm(
+        formKey: _formKey,
+        nameController: _nameController,
+        descriptionController: _descriptionController,
+        imageUrlController: _imageUrlController,
+        isLoading: _isLoading,
+        buttonText: isEdit ? 'Update Category' : 'Create Category',
+        onSubmit: _saveCategory,
       ),
     );
   }
