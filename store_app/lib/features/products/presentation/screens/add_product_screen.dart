@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:store_app/features/products/presentation/providers/product_provider.dart';
 import 'package:store_app/shared/components/custom_button.dart';
-import 'package:store_app/shared/components/product_form.dart';
+import 'package:store_app/features/products/presentation/components/product_form.dart';
 import 'package:store_app/shared/components/screen_layout.dart';
 
 class AddProductScreen extends ConsumerStatefulWidget {

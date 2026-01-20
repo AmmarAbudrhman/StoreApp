@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:store_app/features/categories/data/models/category_model.dart';
 import 'package:store_app/features/categories/presentation/providers/category_provider.dart';
-import 'package:store_app/shared/components/category_form.dart';
+import 'package:store_app/features/categories/presentation/components/category_form.dart';
 import 'package:store_app/shared/components/screen_layout.dart';
 
 class AddEditCategoryScreen extends ConsumerStatefulWidget {

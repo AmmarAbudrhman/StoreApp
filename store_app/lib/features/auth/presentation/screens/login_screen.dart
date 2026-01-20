@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:store_app/core/constants/app_routes.dart';
 import 'package:store_app/features/auth/presentation/providers/auth_provider.dart';
-import 'package:store_app/shared/components/auth_layout.dart';
-import 'package:store_app/shared/components/login_form.dart';
-import 'package:store_app/shared/components/login_header.dart';
+import 'package:store_app/features/auth/presentation/components/auth_layout.dart';
+import 'package:store_app/features/auth/presentation/components/login_form.dart';
+import 'package:store_app/features/auth/presentation/components/login_header.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});

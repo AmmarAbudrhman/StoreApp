@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:store_app/core/constants/app_routes.dart';
 import 'package:store_app/features/auth/presentation/providers/auth_provider.dart';
-import 'package:store_app/shared/components/auth_layout.dart';
-import 'package:store_app/shared/components/register_form.dart';
-import 'package:store_app/shared/components/register_header.dart';
+import 'package:store_app/features/auth/presentation/components/auth_layout.dart';
+import 'package:store_app/features/auth/presentation/components/register_form.dart';
+import 'package:store_app/features/auth/presentation/components/register_header.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});

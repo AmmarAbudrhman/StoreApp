@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:store_app/features/products/data/models/product_model.dart';
 import 'package:store_app/features/products/presentation/providers/product_provider.dart';
 import 'package:store_app/shared/components/custom_button.dart';
-import 'package:store_app/shared/components/product_form.dart';
+import 'package:store_app/features/products/presentation/components/product_form.dart';
 import 'package:store_app/shared/components/screen_layout.dart';
 
 class UpdateProductScreen extends ConsumerStatefulWidget {

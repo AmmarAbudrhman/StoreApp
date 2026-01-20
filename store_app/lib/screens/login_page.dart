@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:store_app/core/constants/app_routes.dart';
-import 'package:store_app/shared/components/auth_layout.dart';
-import 'package:store_app/shared/components/login_form.dart';
-import 'package:store_app/shared/components/login_header.dart';
-import 'package:store_app/shared/components/test_credentials_info.dart';
+import 'package:store_app/features/auth/presentation/components/auth_layout.dart';
+import 'package:store_app/features/auth/presentation/components/login_form.dart';
+import 'package:store_app/features/auth/presentation/components/login_header.dart';
+import 'package:store_app/features/auth/presentation/components/test_credentials_info.dart';
 
 class LoginPage extends StatefulWidget {
   static const String id = 'LoginPage';

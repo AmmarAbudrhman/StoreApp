@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:store_app/core/constants/app_routes.dart';
 import 'package:store_app/features/customers/presentation/providers/customer_provider.dart';
-import 'package:store_app/shared/components/customer_card.dart';
+import 'package:store_app/features/customers/presentation/components/customer_card.dart';
 import 'package:store_app/shared/components/empty_state.dart';
 import 'package:store_app/shared/components/loading_widget.dart';
 import 'package:store_app/shared/components/screen_layout.dart';
