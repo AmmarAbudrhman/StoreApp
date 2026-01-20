@@ -52,7 +52,7 @@ class _AddEditCustomerScreenState extends ConsumerState<AddEditCustomerScreen> {
   }
 
   Future<void> _saveCustomer() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState?.validate() ?? false) {
       setState(() => _isLoading = true);
 
       try {

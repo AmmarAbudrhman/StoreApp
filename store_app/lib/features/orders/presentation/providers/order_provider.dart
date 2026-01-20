@@ -33,7 +33,9 @@ class OrderNotifier extends AsyncNotifier<List<OrderModel>> {
       return orders;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
-      rethrow;
+      throw Exception(
+        'Failed to load orders. Please check your internet connection and try again.',
+      );
     }
   }
 
@@ -47,7 +49,9 @@ class OrderNotifier extends AsyncNotifier<List<OrderModel>> {
       await loadOrders();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
-      rethrow;
+      throw Exception(
+        'Failed to create order. Please check your cart items and try again.',
+      );
     }
   }
 
@@ -66,7 +70,9 @@ class OrderNotifier extends AsyncNotifier<List<OrderModel>> {
       await loadOrders();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
-      rethrow;
+      throw Exception(
+        'Failed to update order. Please check your changes and try again.',
+      );
     }
   }
 
@@ -80,7 +86,7 @@ class OrderNotifier extends AsyncNotifier<List<OrderModel>> {
       await loadOrders();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
-      rethrow;
+      throw Exception('Failed to update order status. Please try again.');
     }
   }
 
@@ -91,7 +97,7 @@ class OrderNotifier extends AsyncNotifier<List<OrderModel>> {
       await loadOrders();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
-      rethrow;
+      throw Exception('Failed to delete order. Please try again.');
     }
   }
 }

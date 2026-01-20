@@ -1,4 +1,5 @@
 import 'package:store_app/core/constants/api_constants.dart';
+import 'package:store_app/core/constants/sample_images.dart';
 import 'package:store_app/core/services/api_service.dart';
 import 'package:store_app/features/products/data/models/product_model.dart';
 
@@ -11,15 +12,29 @@ class ProductService {
         url: '${ApiConstants.baseUrl}${ApiConstants.products}',
       );
 
+      List<ProductModel> products;
+
       // Check if response has the new API format
       if (response is Map && response['isSuccess'] == true) {
         List<dynamic> data = response['data'];
-        return data.map((item) => ProductModel.fromJson(item)).toList();
+        products = data.map((item) => ProductModel.fromJson(item)).toList();
+      } else {
+        // Fallback to old format (direct array)
+        List<dynamic> data = response;
+        products = data.map((item) => ProductModel.fromJson(item)).toList();
       }
 
-      // Fallback to old format (direct array)
-      List<dynamic> data = response;
-      return data.map((item) => ProductModel.fromJson(item)).toList();
+      // Assign sample images if image is empty or null
+      for (int i = 0; i < products.length; i++) {
+        if (products[i].image.isEmpty || products[i].image == 'null') {
+          products[i] = products[i].copyWith(
+            image:
+                highQualityProductImages[i % highQualityProductImages.length],
+          );
+        }
+      }
+
+      return products;
     } catch (e) {
       throw Exception('Failed to load products: $e');
     }
@@ -31,13 +46,24 @@ class ProductService {
         url: '${ApiConstants.baseUrl}${ApiConstants.products}/$id',
       );
 
+      ProductModel product;
+
       // Check if response has the new API format
       if (response is Map && response['isSuccess'] == true) {
-        return ProductModel.fromJson(response['data']);
+        product = ProductModel.fromJson(response['data']);
+      } else {
+        // Fallback to old format
+        product = ProductModel.fromJson(response);
       }
 
-      // Fallback to old format
-      return ProductModel.fromJson(response);
+      // Assign sample image if image is empty or null
+      if (product.image.isEmpty || product.image == 'null') {
+        product = product.copyWith(
+          image: highQualityProductImages[id % highQualityProductImages.length],
+        );
+      }
+
+      return product;
     } catch (e) {
       throw Exception('Failed to load product: $e');
     }
@@ -50,15 +76,29 @@ class ProductService {
             '${ApiConstants.baseUrl}${ApiConstants.products}/category/$category',
       );
 
+      List<ProductModel> products;
+
       // Check if response has the new API format
       if (response is Map && response['isSuccess'] == true) {
         List<dynamic> data = response['data'];
-        return data.map((item) => ProductModel.fromJson(item)).toList();
+        products = data.map((item) => ProductModel.fromJson(item)).toList();
+      } else {
+        // Fallback to old format (direct array)
+        List<dynamic> data = response;
+        products = data.map((item) => ProductModel.fromJson(item)).toList();
       }
 
-      // Fallback to old format (direct array)
-      List<dynamic> data = response;
-      return data.map((item) => ProductModel.fromJson(item)).toList();
+      // Assign sample images if image is empty or null
+      for (int i = 0; i < products.length; i++) {
+        if (products[i].image.isEmpty || products[i].image == 'null') {
+          products[i] = products[i].copyWith(
+            image:
+                highQualityProductImages[i % highQualityProductImages.length],
+          );
+        }
+      }
+
+      return products;
     } catch (e) {
       throw Exception('Failed to load products by category: $e');
     }

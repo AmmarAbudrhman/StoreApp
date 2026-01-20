@@ -45,7 +45,7 @@ class _AddEditCategoryScreenState extends ConsumerState<AddEditCategoryScreen> {
   }
 
   Future<void> _saveCategory() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState?.validate() ?? false) {
       setState(() => _isLoading = true);
 
       try {

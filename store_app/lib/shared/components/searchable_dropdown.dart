@@ -30,21 +30,66 @@ class SearchableDropdown extends StatelessWidget {
         searchFieldProps: TextFieldProps(
           decoration: InputDecoration(
             hintText: searchHintText,
-            prefixIcon: const Icon(Icons.search),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            prefixIcon: const Icon(Icons.search, color: Colors.grey),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.blue, width: 2),
+            ),
+            filled: true,
+            fillColor: Colors.grey.shade50,
           ),
         ),
-        menuProps: MenuProps(borderRadius: BorderRadius.circular(12)),
-        itemBuilder: (context, item, isSelected, onItemSelect) => ListTile(
-          title: Text(item),
-          leading: isSelected
-              ? const Icon(Icons.check, color: Colors.green)
-              : null,
+        menuProps: MenuProps(
+          borderRadius: BorderRadius.circular(16),
+          elevation: 8,
+          shadowColor: Colors.black.withOpacity(0.1),
         ),
-        emptyBuilder: (context, searchEntry) => const Center(
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Text('No items found'),
+        itemBuilder: (context, item, isSelected, onItemSelect) => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.blue.shade50 : Colors.white,
+            border: Border(
+              bottom: BorderSide(color: Colors.grey.shade200, width: 0.5),
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  item,
+                  style: TextStyle(
+                    color: isSelected ? Colors.blue.shade700 : Colors.black87,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
+                  ),
+                ),
+              ),
+              if (isSelected)
+                Icon(Icons.check_circle, color: Colors.blue.shade600, size: 20),
+            ],
+          ),
+        ),
+        emptyBuilder: (context, searchEntry) => Container(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.search_off, size: 48, color: Colors.grey.shade400),
+              const SizedBox(height: 8),
+              Text(
+                'No items found',
+                style: TextStyle(color: Colors.grey.shade600),
+              ),
+            ],
           ),
         ),
       ),
@@ -59,8 +104,23 @@ class SearchableDropdown extends StatelessWidget {
       decoratorProps: DropDownDecoratorProps(
         decoration: InputDecoration(
           labelText: labelText,
-          prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          prefixIcon: prefixIcon != null
+              ? Icon(prefixIcon, color: Colors.grey.shade600)
+              : null,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.blue, width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 16,

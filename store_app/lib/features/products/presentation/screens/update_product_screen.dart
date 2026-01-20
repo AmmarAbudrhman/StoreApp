@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -6,7 +5,7 @@ import 'package:store_app/features/products/data/models/product_model.dart';
 import 'package:store_app/features/products/presentation/providers/product_provider.dart';
 import 'package:store_app/shared/components/custom_button.dart';
 import 'package:store_app/features/products/presentation/components/product_form.dart';
-import 'package:store_app/shared/components/screen_layout.dart';
+import 'package:store_app/shared/components/app_header.dart';
 
 class UpdateProductScreen extends ConsumerStatefulWidget {
   final ProductModel product;
@@ -51,7 +50,7 @@ class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
   }
 
   void _updateProduct() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState?.validate() ?? false) {
       try {
         final productData = {
           'Name': _titleController.text.trim(),
@@ -63,6 +62,9 @@ class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
 
         final productService = ref.read(productServiceProvider);
         await productService.updateProduct(widget.product.id, productData);
+
+        // Invalidate the products provider to refresh the list
+        ref.invalidate(allProductsProvider);
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -90,34 +92,49 @@ class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenLayout(
-      title: 'Update Product',
-      icon: Icons.edit,
-      body: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ProductForm(
-              titleController: _titleController,
-              priceController: _priceController,
-              descriptionController: _descriptionController,
-              selectedCategory: _selectedCategory,
-              categories: ref
-                  .watch(categoriesProvider)
-                  .maybeWhen(data: (data) => data, orElse: () => <String>[]),
-              imageFile: _imageFile,
-              existingImageUrl: widget.product.image,
-              onCategoryChanged: (value) {
-                setState(() {
-                  _selectedCategory = value;
-                });
-              },
-              onPickImage: _pickImage,
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppHeader(
+          title: 'Update Product',
+          icon: Icons.edit,
+          showBackButton: true,
+        ),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ProductForm(
+                  titleController: _titleController,
+                  priceController: _priceController,
+                  descriptionController: _descriptionController,
+                  selectedCategory: _selectedCategory,
+                  categories: ref
+                      .watch(categoriesProvider)
+                      .maybeWhen(
+                        data: (data) => data,
+                        orElse: () => <String>[],
+                      ),
+                  imageFile: _imageFile,
+                  existingImageUrl: widget.product.image,
+                  onCategoryChanged: (value) {
+                    setState(() {
+                      _selectedCategory = value;
+                    });
+                  },
+                  onPickImage: _pickImage,
+                ),
+                const SizedBox(height: 32),
+                CustomButton(text: 'Update Product', onPressed: _updateProduct),
+              ],
             ),
-            const SizedBox(height: 32),
-            CustomButton(text: 'Update Product', onPressed: _updateProduct),
-          ],
+          ),
         ),
       ),
     );

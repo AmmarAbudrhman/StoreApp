@@ -48,43 +48,144 @@ class ProductDetailsScreen extends ConsumerWidget {
         .any((p) => p.id == product.id);
 
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF1A1A1A)),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         actions: [
-          IconButton(
-            icon: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: isFavorite ? AppColors.error : null,
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            onPressed: () {
-              ref.read(favoritesProvider.notifier).toggleFavorite(product);
-            },
+            child: IconButton(
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: isFavorite ? Colors.red : const Color(0xFF6B7280),
+                size: 20,
+              ),
+              onPressed: () {
+                ref.read(favoritesProvider.notifier).toggleFavorite(product);
+              },
+              padding: const EdgeInsets.all(8),
+              constraints: const BoxConstraints(),
+            ),
           ),
-          IconButton(icon: const Icon(Icons.share), onPressed: _shareProduct),
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.share, color: Color(0xFF6B7280), size: 20),
+              onPressed: _shareProduct,
+              padding: const EdgeInsets.all(8),
+              constraints: const BoxConstraints(),
+            ),
+          ),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Product Image
+            // Product Image Section
             Container(
-              height: 300,
+              height: 350,
               width: double.infinity,
-              color: Colors.grey[50],
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Image.network(
-                  product.image,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return const Icon(
-                      Icons.image_not_supported,
-                      size: 100,
-                      color: Colors.grey,
-                    );
-                  },
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Stack(
+                children: [
+                  // Background gradient
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.grey[50]!.withOpacity(0.5),
+                            Colors.white,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Product Image
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(40.0),
+                      child: Hero(
+                        tag: 'product-${product.id}',
+                        child: Image.network(
+                          product.image,
+                          fit: BoxFit.contain,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value:
+                                    loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                    : null,
+                                strokeWidth: 3,
+                                color: AppColors.primary,
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              padding: const EdgeInsets.all(40),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Icon(
+                                Icons.inventory_2_outlined,
+                                size: 80,
+                                color: Colors.grey,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -188,9 +289,23 @@ class ProductDetailsScreen extends ConsumerWidget {
           ],
         ),
       ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, -8),
+            ),
+          ],
+        ),
+        child: SafeArea(
           child: CustomButton(
             text: 'Add to Cart',
             icon: Icons.shopping_cart,
@@ -198,10 +313,16 @@ class ProductDetailsScreen extends ConsumerWidget {
               ref.read(cartProvider.notifier).addToCart(product);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: const Text('Added to cart'),
+                  content: const Text('Added to cart successfully!'),
                   behavior: SnackBarBehavior.floating,
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  margin: const EdgeInsets.all(16),
                   action: SnackBarAction(
                     label: 'View Cart',
+                    textColor: Colors.white,
                     onPressed: () {
                       Navigator.pushNamed(context, AppRoutes.cart);
                     },

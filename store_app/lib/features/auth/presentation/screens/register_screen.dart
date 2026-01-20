@@ -34,7 +34,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   void _register() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState?.validate() ?? false) {
       if (_passwordController.text != _confirmPasswordController.text) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

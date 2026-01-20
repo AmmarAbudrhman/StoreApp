@@ -26,7 +26,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   void _login() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState?.validate() ?? false) {
       try {
         await ref
             .read(authStateProvider.notifier)

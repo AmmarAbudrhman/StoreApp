@@ -4,7 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:store_app/features/products/presentation/providers/product_provider.dart';
 import 'package:store_app/shared/components/custom_button.dart';
 import 'package:store_app/features/products/presentation/components/product_form.dart';
-import 'package:store_app/shared/components/screen_layout.dart';
+import 'package:store_app/shared/components/app_header.dart';
 
 class AddProductScreen extends ConsumerStatefulWidget {
   const AddProductScreen({super.key});
@@ -45,6 +45,9 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
 
         final productService = ref.read(productServiceProvider);
         await productService.addProduct(productData);
+
+        // Invalidate the products provider to refresh the list
+        ref.invalidate(allProductsProvider);
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -93,33 +96,48 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenLayout(
-      title: 'Add Product',
-      icon: Icons.add,
-      body: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ProductForm(
-              titleController: _titleController,
-              priceController: _priceController,
-              descriptionController: _descriptionController,
-              selectedCategory: _selectedCategory,
-              categories: ref
-                  .watch(categoriesProvider)
-                  .maybeWhen(data: (data) => data, orElse: () => <String>[]),
-              imageFile: _imageFile,
-              onCategoryChanged: (value) {
-                setState(() {
-                  _selectedCategory = value;
-                });
-              },
-              onPickImage: _pickImage,
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppHeader(
+          title: 'Add Product',
+          icon: Icons.add,
+          showBackButton: true,
+        ),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ProductForm(
+                  titleController: _titleController,
+                  priceController: _priceController,
+                  descriptionController: _descriptionController,
+                  selectedCategory: _selectedCategory,
+                  categories: ref
+                      .watch(categoriesProvider)
+                      .maybeWhen(
+                        data: (data) => data,
+                        orElse: () => <String>[],
+                      ),
+                  imageFile: _imageFile,
+                  onCategoryChanged: (value) {
+                    setState(() {
+                      _selectedCategory = value;
+                    });
+                  },
+                  onPickImage: _pickImage,
+                ),
+                const SizedBox(height: 32),
+                CustomButton(text: 'Add Product', onPressed: _addProduct),
+              ],
             ),
-            const SizedBox(height: 32),
-            CustomButton(text: 'Add Product', onPressed: _addProduct),
-          ],
+          ),
         ),
       ),
     );

@@ -32,7 +32,9 @@ class CategoryNotifier extends AsyncNotifier<List<CategoryModel>> {
       return categories;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
-      rethrow;
+      throw Exception(
+        'Failed to load categories. Please check your internet connection and try again.',
+      );
     }
   }
 
@@ -51,7 +53,9 @@ class CategoryNotifier extends AsyncNotifier<List<CategoryModel>> {
       await loadCategories();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
-      rethrow;
+      throw Exception(
+        'Failed to create category. Please check your input and try again.',
+      );
     }
   }
 
@@ -72,7 +76,9 @@ class CategoryNotifier extends AsyncNotifier<List<CategoryModel>> {
       await loadCategories();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
-      rethrow;
+      throw Exception(
+        'Failed to update category. Please check your changes and try again.',
+      );
     }
   }
 
@@ -83,7 +89,7 @@ class CategoryNotifier extends AsyncNotifier<List<CategoryModel>> {
       await loadCategories();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
-      rethrow;
+      throw Exception('Failed to delete category. Please try again.');
     }
   }
 }
