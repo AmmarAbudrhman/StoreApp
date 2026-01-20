@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:store_app/core/utils/validation.dart';
 import 'package:store_app/features/customers/data/models/customer_model.dart';
 import 'package:store_app/features/customers/presentation/providers/customer_provider.dart';
-import 'package:store_app/shared/components/custom_button.dart';
-import 'package:store_app/shared/components/custom_text_field.dart';
+import 'package:store_app/shared/components/customer_form.dart';
+import 'package:store_app/shared/components/screen_layout.dart';
 
 class AddEditCustomerScreen extends ConsumerStatefulWidget {
   final CustomerModel? customer;
@@ -107,56 +106,18 @@ class _AddEditCustomerScreenState extends ConsumerState<AddEditCustomerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(isEdit ? 'Edit Customer' : 'Add Customer')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              CustomTextField(
-                controller: _fullNameController,
-                labelText: 'Full Name',
-                prefixIcon: Icons.person,
-                validator: (value) =>
-                    Validation.validateRequired(value, 'full name'),
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: _emailController,
-                labelText: 'Email',
-                prefixIcon: Icons.email,
-                keyboardType: TextInputType.emailAddress,
-                validator: Validation.validateEmail,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: _phoneController,
-                labelText: 'Phone',
-                prefixIcon: Icons.phone,
-                keyboardType: TextInputType.phone,
-                validator: Validation.validatePhone,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: _addressController,
-                labelText: 'Address',
-                prefixIcon: Icons.location_on,
-                maxLines: 3,
-                validator: (value) =>
-                    Validation.validateRequired(value, 'address'),
-              ),
-              const SizedBox(height: 24),
-              CustomButton(
-                text: isEdit ? 'Update Customer' : 'Create Customer',
-                onPressed: _saveCustomer,
-                isLoading: _isLoading,
-              ),
-            ],
-          ),
-        ),
+    return ScreenLayout(
+      title: isEdit ? 'Edit Customer' : 'Add Customer',
+      icon: isEdit ? Icons.edit : Icons.person_add,
+      body: CustomerForm(
+        formKey: _formKey,
+        fullNameController: _fullNameController,
+        emailController: _emailController,
+        phoneController: _phoneController,
+        addressController: _addressController,
+        isLoading: _isLoading,
+        buttonText: isEdit ? 'Update Customer' : 'Create Customer',
+        onSubmit: _saveCustomer,
       ),
     );
   }

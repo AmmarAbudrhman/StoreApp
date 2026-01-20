@@ -4,7 +4,10 @@ import 'package:store_app/core/constants/app_colors.dart';
 import 'package:store_app/features/products/data/models/product_model.dart';
 import 'package:store_app/features/products/presentation/components/product_card.dart';
 import 'package:store_app/features/products/presentation/providers/product_provider.dart';
+import 'package:store_app/shared/components/custom_text_field.dart';
+import 'package:store_app/shared/components/empty_state.dart';
 import 'package:store_app/shared/components/loading_widget.dart';
+import 'package:store_app/shared/components/screen_layout.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -52,94 +55,91 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   Widget build(BuildContext context) {
     final productsAsync = ref.watch(allProductsProvider);
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: TextField(
-          controller: _searchController,
-          autofocus: true,
-          decoration: InputDecoration(
-            hintText: 'Search products...',
-            border: InputBorder.none,
-            hintStyle: Theme.of(
-              context,
-            ).textTheme.bodyLarge?.copyWith(color: AppColors.textHint),
-          ),
-          style: Theme.of(context).textTheme.bodyLarge,
-          onChanged: (value) {
-            productsAsync.whenData((products) {
-              _filterProducts(products, value);
-            });
-          },
-        ),
-        actions: [
-          if (_searchController.text.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.clear),
-              onPressed: () {
-                _searchController.clear();
-                productsAsync.whenData((products) {
-                  _filterProducts(products, '');
-                });
-              },
-            ),
-        ],
-      ),
-      body: productsAsync.when(
-        data: (allProducts) {
-          final products = _isSearching ? _filteredProducts : allProducts;
-
-          if (products.isEmpty && _isSearching) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.search_off, size: 100, color: Colors.grey[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No products found',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Try searching with different keywords',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
+    return ScreenLayout(
+      title: 'Search Products',
+      icon: Icons.search,
+      body: Container(
+        color: AppColors.background,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: CustomTextField(
+                controller: _searchController,
+                labelText: 'Search products...',
+                prefixIcon: Icons.search,
+                onChanged: (query) {
+                  productsAsync.whenData((products) {
+                    _filterProducts(products, query);
+                  });
+                },
               ),
-            );
-          }
-
-          return GridView.builder(
-            padding: const EdgeInsets.all(16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.7,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
             ),
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              return ProductCard(product: products[index]);
-            },
-          );
-        },
-        loading: () => const LoadingWidget(),
-        error: (error, _) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: AppColors.error),
-              const SizedBox(height: 16),
-              Text(
-                'Error: $error',
-                style: Theme.of(context).textTheme.bodyLarge,
-                textAlign: TextAlign.center,
+            Expanded(
+              child: productsAsync.when(
+                data: (products) {
+                  final displayProducts = _isSearching
+                      ? _filteredProducts
+                      : products;
+
+                  if (displayProducts.isEmpty) {
+                    if (_isSearching) {
+                      return EmptyState(
+                        icon: Icons.search_off,
+                        title: 'No products found',
+                        subtitle: 'Try different keywords',
+                      );
+                    } else {
+                      return const EmptyState(
+                        icon: Icons.inventory_2_outlined,
+                        title: 'No products available',
+                      );
+                    }
+                  }
+
+                  return GridView.builder(
+                    padding: const EdgeInsets.all(16),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.75,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
+                    itemCount: displayProducts.length,
+                    itemBuilder: (context, index) {
+                      return ProductCard(
+                        product: displayProducts[index],
+                        isManageMode: false,
+                      );
+                    },
+                  );
+                },
+                loading: () => const LoadingWidget(),
+                error: (error, stack) => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        size: 64,
+                        color: Colors.red,
+                      ),
+                      const SizedBox(height: 16),
+                      Text('Error loading products: $error'),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          ref.invalidate(allProductsProvider);
+                        },
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

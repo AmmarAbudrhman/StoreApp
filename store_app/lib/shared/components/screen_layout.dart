@@ -9,6 +9,7 @@ class ScreenLayout extends StatelessWidget {
   final bool showBackButton;
   final VoidCallback? onBackPressed;
   final EdgeInsetsGeometry? padding;
+  final Widget? floatingActionButton;
 
   const ScreenLayout({
     super.key,
@@ -19,6 +20,7 @@ class ScreenLayout extends StatelessWidget {
     this.showBackButton = true,
     this.onBackPressed,
     this.padding = const EdgeInsets.all(24.0),
+    this.floatingActionButton,
   });
 
   @override
@@ -37,6 +39,7 @@ class ScreenLayout extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(padding: padding, child: body),
       ),
+      floatingActionButton: floatingActionButton,
     );
   }
 }

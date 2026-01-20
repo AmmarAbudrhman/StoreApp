@@ -4,6 +4,8 @@ import 'package:store_app/core/constants/app_colors.dart';
 import 'package:store_app/features/products/presentation/components/cart_item_card.dart';
 import 'package:store_app/features/products/presentation/providers/product_provider.dart';
 import 'package:store_app/shared/components/custom_button.dart';
+import 'package:store_app/shared/components/empty_state.dart';
+import 'package:store_app/shared/components/screen_layout.dart';
 
 class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
@@ -13,75 +15,57 @@ class CartScreen extends ConsumerWidget {
     final cartItems = ref.watch(cartProvider);
     final cartTotal = ref.watch(cartTotalProvider);
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text('My Cart')),
-      body: cartItems.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return ScreenLayout(
+      title: 'My Cart',
+      icon: Icons.shopping_cart,
+      body: Container(
+        color: AppColors.background,
+        child: cartItems.isEmpty
+            ? const EmptyState(
+                icon: Icons.shopping_cart_outlined,
+                title: 'Your cart is empty',
+                subtitle: 'Add some products to get started',
+              )
+            : Column(
                 children: [
-                  Icon(
-                    Icons.shopping_cart_outlined,
-                    size: 100,
-                    color: Colors.grey[400],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Your cart is empty',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: AppColors.textSecondary,
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: cartItems.length,
+                      itemBuilder: (context, index) {
+                        final product = cartItems[index];
+                        return CartItemCard(
+                          product: product,
+                          onRemove: () {
+                            ref
+                                .read(cartProvider.notifier)
+                                .removeFromCart(index);
+                          },
+                        );
+                      },
                     ),
                   ),
-                ],
-              ),
-            )
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
+                  Container(
                     padding: const EdgeInsets.all(16),
-                    itemCount: cartItems.length,
-                    itemBuilder: (context, index) {
-                      final product = cartItems[index];
-                      return CartItemCard(
-                        product: product,
-                        onRemove: () {
-                          ref.read(cartProvider.notifier).removeFromCart(index);
-                        },
-                      );
-                    },
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.shadow,
-                        blurRadius: 10,
-                        offset: const Offset(0, -2),
-                      ),
-                    ],
-                  ),
-                  child: SafeArea(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, -2),
+                        ),
+                      ],
+                    ),
                     child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Total:',
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                            Text(
-                              '\$${cartTotal.toStringAsFixed(2)}',
-                              style: Theme.of(context).textTheme.displaySmall
-                                  ?.copyWith(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              'Total: \$${cartTotal.toStringAsFixed(2)}',
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -89,10 +73,10 @@ class CartScreen extends ConsumerWidget {
                         CustomButton(
                           text: 'Checkout',
                           onPressed: () {
+                            // TODO: Implement checkout functionality
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Proceeding to checkout...'),
-                                behavior: SnackBarBehavior.floating,
+                                content: Text('Checkout feature coming soon!'),
                               ),
                             );
                           },
@@ -100,9 +84,9 @@ class CartScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+      ),
     );
   }
 }
