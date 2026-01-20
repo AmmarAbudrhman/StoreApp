@@ -15,7 +15,7 @@ class AuthNotifier extends Notifier<AsyncValue<UserModel?>> {
   @override
   AsyncValue<UserModel?> build() {
     loadUser();
-    return const AsyncValue.loading();
+    return const AsyncValue.data(null);
   }
 
   AuthService get _authService => ref.read(authServiceProvider);

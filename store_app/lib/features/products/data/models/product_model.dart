@@ -21,12 +21,12 @@ class ProductModel {
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
-      id: json['id'] ,
-      title: json['title'] ?? '',
-      price: json['price']?.toDouble() ?? 0.0,
-      description: json['description'] ?? '',
-      category: json['category'] ?? '',
-      image: json['image'] ?? '',
+      id: json['id'] ?? 0,
+      title: json['title'] ?? json['Name'] ?? '',
+      price: json['price']?.toDouble() ?? json['Price']?.toDouble() ?? 0.0,
+      description: json['description'] ?? json['Description'] ?? '',
+      category: json['category'] ?? json['Category'] ?? '',
+      image: json['image'] ?? json['Image'] ?? '',
       rating: RatingModel.fromJson(json['rating'] ?? {}),
     );
   }
@@ -34,11 +34,11 @@ class ProductModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'title': title,
-      'price': price,
-      'description': description,
-      'category': category,
-      'image': image,
+      'Name': title,
+      'Price': price,
+      'Description': description,
+      'Category': category,
+      'Image': image,
       'rating': rating.toJson(),
     };
   }

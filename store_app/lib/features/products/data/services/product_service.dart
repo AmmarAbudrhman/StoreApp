@@ -66,18 +66,39 @@ class ProductService {
 
   Future<List<String>> getAllCategories() async {
     try {
-      List<dynamic> data = await _api.get(
+      final response = await _api.get(
         url: '${ApiConstants.baseUrl}${ApiConstants.categories}',
       );
-      return data.map((item) => item.toString()).toList();
+
+      // Check if response has the new API format
+      if (response is Map && response['isSuccess'] == true) {
+        List<dynamic> data = response['data'];
+        return data.map((item) {
+          if (item is Map<String, dynamic>) {
+            // If item is an object, extract the name property
+            return item['name']?.toString() ??
+                item['Name']?.toString() ??
+                item.toString();
+          }
+          return item.toString();
+        }).toList();
+      }
+
+      // Fallback to old format (direct array)
+      List<dynamic> data = response as List<dynamic>;
+      return data.map((item) {
+        if (item is Map<String, dynamic>) {
+          // If item is an object, extract the name property
+          return item['name']?.toString() ??
+              item['Name']?.toString() ??
+              item.toString();
+        }
+        return item.toString();
+      }).toList();
     } catch (e) {
       throw Exception('Failed to load categories: $e');
     }
   }
-
-
-
- 
 
   Future<void> deleteProduct(int id) async {
     try {
@@ -95,6 +116,9 @@ class ProductService {
         url: '${ApiConstants.baseUrl}${ApiConstants.products}',
         body: productData,
       );
+      if (response == null || response is! Map<String, dynamic>) {
+        throw Exception('Invalid response from server');
+      }
       return ProductModel.fromJson(response);
     } catch (e) {
       throw Exception('Failed to add product: $e');

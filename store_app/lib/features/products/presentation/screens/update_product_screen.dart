@@ -5,7 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:store_app/features/products/data/models/product_model.dart';
 import 'package:store_app/features/products/presentation/providers/product_provider.dart';
 import 'package:store_app/shared/components/custom_button.dart';
-import 'package:store_app/shared/components/custom_text_field.dart';
+import 'package:store_app/shared/components/product_form.dart';
+import 'package:store_app/shared/components/screen_layout.dart';
 
 class UpdateProductScreen extends ConsumerStatefulWidget {
   final ProductModel product;
@@ -22,7 +23,7 @@ class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
   late final TextEditingController _titleController;
   late final TextEditingController _priceController;
   late final TextEditingController _descriptionController;
-  late final TextEditingController _categoryController;
+  String? _selectedCategory;
   XFile? _imageFile;
 
   final ImagePicker _picker = ImagePicker();
@@ -37,7 +38,7 @@ class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
     _descriptionController = TextEditingController(
       text: widget.product.description,
     );
-    _categoryController = TextEditingController(text: widget.product.category);
+    _selectedCategory = widget.product.category;
   }
 
   Future<void> _pickImage() async {
@@ -53,11 +54,11 @@ class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
     if (_formKey.currentState!.validate()) {
       try {
         final productData = {
-          'title': _titleController.text.trim(),
-          'price': double.parse(_priceController.text),
-          'description': _descriptionController.text.trim(),
-          'category': _categoryController.text.trim(),
-          'image': _imageFile?.path ?? widget.product.image,
+          'Name': _titleController.text.trim(),
+          'Price': double.parse(_priceController.text),
+          'Description': _descriptionController.text.trim(),
+          'Category': _selectedCategory ?? widget.product.category,
+          'Image': _imageFile?.path ?? widget.product.image,
         };
 
         final productService = ref.read(productServiceProvider);
@@ -84,136 +85,39 @@ class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
     _titleController.dispose();
     _priceController.dispose();
     _descriptionController.dispose();
-    _categoryController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Update Product')),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 20),
-                GestureDetector(
-                  onTap: _pickImage,
-                  child: Container(
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey),
-                    ),
-                    child: _imageFile != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.file(
-                              File(_imageFile!.path),
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : widget.product.image.isNotEmpty
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              widget.product.image,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.add_photo_alternate,
-                                      size: 48,
-                                      color: Colors.grey,
-                                    ),
-                                    SizedBox(height: 8),
-                                    Text(
-                                      'Tap to change image',
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                          )
-                        : const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add_photo_alternate,
-                                size: 48,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                'Tap to add image',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                CustomTextField(
-                  controller: _titleController,
-                  labelText: 'Title',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a title';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  controller: _priceController,
-                  labelText: 'Price',
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a price';
-                    }
-                    if (double.tryParse(value) == null) {
-                      return 'Please enter a valid price';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  controller: _descriptionController,
-                  labelText: 'Description',
-                  maxLines: 3,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a description';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  controller: _categoryController,
-                  labelText: 'Category',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a category';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 32),
-                CustomButton(text: 'Update Product', onPressed: _updateProduct),
-              ],
+    return ScreenLayout(
+      title: 'Update Product',
+      icon: Icons.edit,
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ProductForm(
+              titleController: _titleController,
+              priceController: _priceController,
+              descriptionController: _descriptionController,
+              selectedCategory: _selectedCategory,
+              categories: ref
+                  .watch(categoriesProvider)
+                  .maybeWhen(data: (data) => data, orElse: () => <String>[]),
+              imageFile: _imageFile,
+              existingImageUrl: widget.product.image,
+              onCategoryChanged: (value) {
+                setState(() {
+                  _selectedCategory = value;
+                });
+              },
+              onPickImage: _pickImage,
             ),
-          ),
+            const SizedBox(height: 32),
+            CustomButton(text: 'Update Product', onPressed: _updateProduct),
+          ],
         ),
       ),
     );

@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:store_app/features/products/presentation/providers/product_provider.dart';
 import 'package:store_app/shared/components/custom_button.dart';
-import 'package:store_app/shared/components/custom_text_field.dart';
+import 'package:store_app/shared/components/product_form.dart';
+import 'package:store_app/shared/components/screen_layout.dart';
 
 class AddProductScreen extends ConsumerStatefulWidget {
   const AddProductScreen({super.key});
@@ -18,7 +19,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   final _titleController = TextEditingController();
   final _priceController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _categoryController = TextEditingController();
+  String? _selectedCategory;
   XFile? _imageFile;
 
   final ImagePicker _picker = ImagePicker();
@@ -33,14 +34,14 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   }
 
   void _addProduct() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState?.validate() == true) {
       try {
         final productData = {
-          'title': _titleController.text.trim(),
-          'price': double.parse(_priceController.text),
-          'description': _descriptionController.text.trim(),
-          'category': _categoryController.text.trim(),
-          'image': _imageFile?.path ?? '', // Or upload and get URL
+          'Name': _titleController.text.trim(),
+          'Price': double.parse(_priceController.text),
+          'Description': _descriptionController.text.trim(),
+          'Category': _selectedCategory ?? '',
+          'Image': _imageFile?.path ?? '', // Or upload and get URL
         };
 
         final productService = ref.read(productServiceProvider);
@@ -54,9 +55,30 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         }
       } catch (e) {
         if (mounted) {
+          String errorMessage = 'Failed to add product';
+          final errorString = e.toString().toLowerCase();
+
+          if (errorString.contains('category not found')) {
+            errorMessage = 'Please select a valid category from the list';
+          } else if (errorString.contains('name field is required') ||
+              errorString.contains('name')) {
+            errorMessage = 'Please enter a product name';
+          } else if (errorString.contains('price')) {
+            errorMessage = 'Please enter a valid price';
+          } else if (errorString.contains('description')) {
+            errorMessage = 'Please enter a product description';
+          } else if (errorString.contains('network') ||
+              errorString.contains('connection')) {
+            errorMessage =
+                'Network error. Please check your connection and try again';
+          } else {
+            errorMessage =
+                'An error occurred while adding the product. Please try again';
+          }
+
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text('Failed to add product: $e')));
+          ).showSnackBar(SnackBar(content: Text(errorMessage)));
         }
       }
     }
@@ -67,111 +89,38 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     _titleController.dispose();
     _priceController.dispose();
     _descriptionController.dispose();
-    _categoryController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Add Product')),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 20),
-                GestureDetector(
-                  onTap: _pickImage,
-                  child: Container(
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey),
-                    ),
-                    child: _imageFile != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.file(
-                              File(_imageFile!.path),
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add_photo_alternate,
-                                size: 48,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                'Tap to add image',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                CustomTextField(
-                  controller: _titleController,
-                  labelText: 'Title',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a title';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  controller: _priceController,
-                  labelText: 'Price',
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a price';
-                    }
-                    if (double.tryParse(value) == null) {
-                      return 'Please enter a valid price';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  controller: _descriptionController,
-                  labelText: 'Description',
-                  maxLines: 3,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a description';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  controller: _categoryController,
-                  labelText: 'Category',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a category';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 32),
-                CustomButton(text: 'Add Product', onPressed: _addProduct),
-              ],
+    return ScreenLayout(
+      title: 'Add Product',
+      icon: Icons.add,
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ProductForm(
+              titleController: _titleController,
+              priceController: _priceController,
+              descriptionController: _descriptionController,
+              selectedCategory: _selectedCategory,
+              categories: ref
+                  .watch(categoriesProvider)
+                  .maybeWhen(data: (data) => data, orElse: () => <String>[]),
+              imageFile: _imageFile,
+              onCategoryChanged: (value) {
+                setState(() {
+                  _selectedCategory = value;
+                });
+              },
+              onPickImage: _pickImage,
             ),
-          ),
+            const SizedBox(height: 32),
+            CustomButton(text: 'Add Product', onPressed: _addProduct),
+          ],
         ),
       ),
     );

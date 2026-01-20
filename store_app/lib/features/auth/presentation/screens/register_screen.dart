@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:store_app/core/constants/app_routes.dart';
-import 'package:store_app/core/utils/validation.dart';
 import 'package:store_app/features/auth/presentation/providers/auth_provider.dart';
-import 'package:store_app/shared/components/custom_button.dart';
-import 'package:store_app/shared/components/custom_text_field.dart';
+import 'package:store_app/shared/components/auth_layout.dart';
+import 'package:store_app/shared/components/register_form.dart';
+import 'package:store_app/shared/components/register_header.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -21,8 +21,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _addressController = TextEditingController();
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
@@ -85,117 +83,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final authState = ref.watch(authStateProvider);
     final isLoading = authState.isLoading;
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 20),
-                Icon(
-                  Icons.person_add,
-                  size: 80,
-                  color: Theme.of(context).primaryColor,
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Create Account',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Fill in your details to register',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 30),
-                CustomTextField(
-                  controller: _nameController,
-                  labelText: 'Full Name',
-                  prefixIcon: Icons.person,
-                  validator: (value) =>
-                      Validation.validateRequired(value, 'name'),
-                ),
-                const SizedBox(height: 20),
-                CustomTextField(
-                  controller: _emailController,
-                  labelText: 'Email',
-                  prefixIcon: Icons.email,
-                  keyboardType: TextInputType.emailAddress,
-                  validator: Validation.validateEmail,
-                ),
-                const SizedBox(height: 20),
-                CustomTextField(
-                  controller: _phoneController,
-                  labelText: 'Phone',
-                  prefixIcon: Icons.phone,
-                  keyboardType: TextInputType.phone,
-                  validator: Validation.validatePhone,
-                ),
-                const SizedBox(height: 20),
-                CustomTextField(
-                  controller: _addressController,
-                  labelText: 'Address',
-                  prefixIcon: Icons.location_on,
-                  validator: (value) =>
-                      Validation.validateRequired(value, 'address'),
-                ),
-                const SizedBox(height: 20),
-                CustomTextField(
-                  controller: _passwordController,
-                  labelText: 'Password',
-                  prefixIcon: Icons.lock,
-                  obscureText: _obscurePassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
-                  validator: Validation.validatePassword,
-                ),
-                const SizedBox(height: 20),
-                CustomTextField(
-                  controller: _confirmPasswordController,
-                  labelText: 'Confirm Password',
-                  prefixIcon: Icons.lock_outline,
-                  obscureText: _obscureConfirmPassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureConfirmPassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureConfirmPassword = !_obscureConfirmPassword;
-                      });
-                    },
-                  ),
-                  validator: (value) =>
-                      Validation.validateRequired(value, 'confirm password'),
-                ),
-                const SizedBox(height: 30),
-                CustomButton(
-                  text: 'Register',
-                  onPressed: _register,
-                  isLoading: isLoading,
-                ),
-              ],
-            ),
-          ),
-        ),
+    return AuthLayout(
+      header: const RegisterHeader(),
+      form: RegisterForm(
+        formKey: _formKey,
+        nameController: _nameController,
+        emailController: _emailController,
+        phoneController: _phoneController,
+        passwordController: _passwordController,
+        confirmPasswordController: _confirmPasswordController,
+        addressController: _addressController,
+        isLoading: isLoading,
+        onRegister: _register,
       ),
     );
   }
